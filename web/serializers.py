@@ -6,3 +6,4 @@ class OpenPhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OpenPhoto
         fields = ('id', 'title', 'url', 'country', 'city', 'status')
+        read_only_fields = ('status',)
