@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import OpenPhoto
+from .models import OpenPhoto, Page
 
 class OpenPhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -26,3 +26,8 @@ class AuthenticatedOpenPhotoSerializer(OpenPhotoSerializer):
         model = OpenPhoto
         fields = ('id', 'title', 'url', 'country', 'city', 'status')
         read_only_fields = ('title',)
+
+class PageSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Page
+        fields = ('id', 'title', 'slug', 'content')

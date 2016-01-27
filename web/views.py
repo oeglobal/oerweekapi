@@ -3,8 +3,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .models import OpenPhoto
-from .serializers import OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer
+from .models import OpenPhoto, Page
+from .serializers import OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer, PageSerializer
 
 class OpenPhotoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -16,11 +16,7 @@ class OpenPhotoViewSet(viewsets.ModelViewSet):
 
         return OpenPhotoSerializer
 
-    def list(self, request):
-        return super().list(self, request)
-
-    # def update(self, request, pk=None):
-    #     if request.user.is_authenticated():
-    #         obj = super().update(request, pk)
-    #         import ipdb; ipdb.set_trace()
-
+class PageViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    queryset = Page.objects.all()
+    serializer_class = PageSerializer

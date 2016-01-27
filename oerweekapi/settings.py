@@ -45,6 +45,9 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'rest_auth',
 
+    'django_wysiwyg',
+    'ckeditor',
+
     'model_utils',
     'corsheaders',
 
@@ -131,3 +134,5 @@ CORS_ORIGIN_ALLOW_ALL = True
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True
 }
+
+DJANGO_WYSIWYG_FLAVOR = "ckeditor"

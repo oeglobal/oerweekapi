@@ -4,10 +4,11 @@ from django.contrib import admin
 from rest_framework import routers
 import rest_framework_jwt.views
 
-from web.views import OpenPhotoViewSet
+from web.views import OpenPhotoViewSet, PageViewSet
 
 router = routers.DefaultRouter()
 router.register(r'openphotos', OpenPhotoViewSet)
+router.register(r'pages', PageViewSet)
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
