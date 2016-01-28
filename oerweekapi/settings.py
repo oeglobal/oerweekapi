@@ -13,7 +13,7 @@ SECRET_KEY = '0_@=%klk7cunm(-bksl7_gd^8_b6q=!bv!*of+zc490x+(o0+9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.openeducationweek.org']
 
 
 # Application definition
