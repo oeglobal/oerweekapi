@@ -39,7 +39,7 @@ INSTALLED_APPS = (
     'model_utils',
     'corsheaders',
 
-    'web'
+    'web',
 )
 
 MIDDLEWARE_CLASSES = (
