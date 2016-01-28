@@ -113,4 +113,4 @@ JWT_AUTH = {
 
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
-from localsettings import *
+from .localsettings import *
