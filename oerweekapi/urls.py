@@ -4,14 +4,17 @@ from django.contrib import admin
 from rest_framework import routers
 import rest_framework_jwt.views
 
-from web.views import OpenPhotoViewSet, PageViewSet
+from web.views import (OpenPhotoViewSet, PageViewSet, WordpressCallback,
+    ResourceViewSet)
 
 router = routers.DefaultRouter()
 router.register(r'openphotos', OpenPhotoViewSet)
-router.register(r'pages', PageViewSet)
+router.register(r'pages', PageViewSet, base_name='Page')
+router.register(r'resources', ResourceViewSet, base_name='Resource')
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
+    url(r'^api/wp-callback/', WordpressCallback.as_view()),
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
