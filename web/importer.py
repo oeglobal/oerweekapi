@@ -37,4 +37,12 @@ def import_project(project_id):
         resource.license = acf.get('extra_license', '')
         resource.link = acf.get('extra_link', '')
 
+    if data.get('_links', {}).get('https://api.w.org/featuredmedia'):
+        media_url = data.get('_links', {}).get('https://api.w.org/featuredmedia')[0].get('href')
+        media_data = json.loads(requests.get(media_url, auth=auth).content.decode())
+
+        image_url = media_data.get('media_details', {}).get('sizes', {}).get('large', {}).get('source_url')
+        if image_url:
+            resource.image_url = image_url
+
     resource.save()

@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 
 from web.importer import import_project
+from web.models import Resource
 
 class Command(BaseCommand):
     help = "Sync data from WP"
@@ -15,6 +16,7 @@ class Command(BaseCommand):
         parser.add_argument('--id', type=int)
         parser.add_argument('--type', type=str)
         parser.add_argument('--maxto', type=int)
+        parser.add_argument('--refresh', type=bool)
 
     def handle(self, *args, **options):
         auth = HTTPBasicAuth(settings.WP_USER, settings.WP_PASS)
@@ -30,3 +32,7 @@ class Command(BaseCommand):
         if options.get('maxto'):
             for i in range(200, options.get('maxto') + 1):
                 import_project(i)
+
+        if options.get('refresh'):
+            for resource in Resource.objects.all():
+                import_project(resource.post_id)
