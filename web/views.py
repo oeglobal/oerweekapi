@@ -55,3 +55,18 @@ class ResourceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(slug=self.request.GET.get('slug'))
 
         return queryset
+
+class EventViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+    serializer_class = ResourceSerializer
+
+    def get_queryset(self):
+        queryset = Resource.objects.filter(
+                        post_status='publish',
+                        created__year=2016,
+                        post_type__in=['event']
+                    )
+        if self.request.GET.get('slug'):
+            queryset = queryset.filter(slug=self.request.GET.get('slug'))
+
+        return queryset
