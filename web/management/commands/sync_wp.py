@@ -6,7 +6,7 @@ import json
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from web.importer import import_project
+from web.importer import import_resource
 from web.models import Resource
 
 class Command(BaseCommand):
@@ -27,12 +27,12 @@ class Command(BaseCommand):
 
 
         if options.get('id'):
-            import_project(options.get('id'))
+            import_resource(post_type=options.get('type'), post_id=options.get('id'))
 
         if options.get('maxto'):
-            for i in range(200, options.get('maxto') + 1):
-                import_project(i)
+            for i in range(1, options.get('maxto') + 1):
+                import_resource(post_type=options.get('type'), post_id=i)
 
         if options.get('refresh'):
             for resource in Resource.objects.all():
-                import_project(resource.post_id)
+                resource.refresh()

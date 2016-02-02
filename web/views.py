@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .importer import import_project
+from .importer import import_resource
 from .models import OpenPhoto, Page, Resource
 from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
     PageSerializer, ResourceSerializer)
@@ -36,7 +36,8 @@ class WordpressCallback(APIView):
 
     def get(self, request, format=None):
         if request.GET.get('post_type'):
-            import_project(request.GET.get('post_id'))
+            import_resource(post_type=request.GET.get('post_type'),
+                            post_id=request.GET.get('post_id'))
 
         return Response('OK')
 
@@ -45,7 +46,11 @@ class ResourceViewSet(viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
 
     def get_queryset(self):
-        queryset = Resource.objects.filter(post_status='publish', created__year=2016)
+        queryset = Resource.objects.filter(
+                        post_status='publish',
+                        created__year=2016,
+                        post_type__in=['resource', 'project']
+                    )
         if self.request.GET.get('slug'):
             queryset = queryset.filter(slug=self.request.GET.get('slug'))
 

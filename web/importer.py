@@ -8,20 +8,24 @@ from django.conf import settings
 
 from .models import Resource
 
-def import_project(project_id):
+def import_resource(post_type, post_id):
+    if post_type not in ['project', 'resource']:
+        return
+
     auth = HTTPBasicAuth(settings.WP_USER, settings.WP_PASS)
 
-    url = "{}/wp/v2/project/{}".format(settings.WP_API, project_id)
+    url = "{}/wp/v2/{}/{}".format(settings.WP_API, post_type, post_id)
 
     data = json.loads(requests.get(url, auth=auth).content.decode())
+    print(url)
     pprint(data)
-    if data.get('code') in ['rest_post_invalid_id', 'rest_forbidden']:
+    if data.get('code') in ['rest_post_invalid_id', 'rest_forbidden', 'rest_no_route']:
         return
 
     try:
-        resource = Resource.objects.get(post_id=project_id)
+        resource = Resource.objects.get(post_id=post_id)
     except Resource.DoesNotExist:
-        resource = Resource(post_id=project_id, post_type='project')
+        resource = Resource(post_id=post_id, post_type=post_type)
 
     resource.title = data.get('title').get('rendered')
     resource.slug = data.get('slug')

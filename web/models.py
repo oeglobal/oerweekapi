@@ -74,3 +74,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
     categories = models.ForeignKey(Category, null=True)
     tags = TaggableManager()
+
+    def refresh(self):
+        from .importer import import_resource
+        import_resource(post_type=self.post_type, post_id=self.post_id)
