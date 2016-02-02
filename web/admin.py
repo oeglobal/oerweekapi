@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import OpenPhoto, Page, Resource
 
 class ResourceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('post_id', 'title', 'post_status')
 
 class OpenPhotoAdmin(admin.ModelAdmin):
     pass
