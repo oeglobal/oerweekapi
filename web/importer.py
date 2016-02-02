@@ -9,7 +9,7 @@ from django.conf import settings
 from .models import Resource
 
 def import_resource(post_type, post_id):
-    if post_type not in ['project', 'resource']:
+    if post_type not in ['project', 'resource', 'event']:
         return
 
     auth = HTTPBasicAuth(settings.WP_USER, settings.WP_PASS)
