@@ -45,7 +45,7 @@ class ResourceViewSet(viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
 
     def get_queryset(self):
-        queryset = Resource.objects.filter(post_status='publish')
+        queryset = Resource.objects.filter(post_status='publish', created__year=2016)
         if self.request.GET.get('slug'):
             queryset = queryset.filter(slug=self.request.GET.get('slug'))
 

@@ -4,6 +4,8 @@ from .models import OpenPhoto, Page, Resource
 
 class ResourceAdmin(admin.ModelAdmin):
     list_display = ('post_id', 'title', 'post_status')
+    readonly_fields = ('created', 'modified',)
+    search_fields = ('post_id', 'title')
 
 class OpenPhotoAdmin(admin.ModelAdmin):
     pass

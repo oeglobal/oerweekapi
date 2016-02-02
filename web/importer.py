@@ -1,5 +1,6 @@
 import json
 import requests
+import arrow
 from pprint import pprint
 from requests.auth import HTTPBasicAuth
 
@@ -26,6 +27,7 @@ def import_project(project_id):
     resource.slug = data.get('slug')
     resource.post_status = data.get('post_status')
     resource.content = data.get('content').get('rendered')
+    resource.created = arrow.get(data.get('date')).datetime
 
     acf = data.get('acf', {})
 
