@@ -70,7 +70,8 @@ class Resource(TimeStampedModel, ReviewModel):
 
     image_url = models.URLField(blank=True, null=True)
 
-    #TODO Location
+    city = models.CharField(max_length=255, blank=True)
+    country = models.CharField(max_length=255, blank=True)
 
     categories = models.ForeignKey(Category, null=True)
     tags = TaggableManager()

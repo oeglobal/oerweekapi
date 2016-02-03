@@ -42,6 +42,8 @@ def import_resource(post_type, post_id):
         resource.form_language = acf.get('extra_language', '')
         resource.license = acf.get('extra_license', '')
         resource.link = acf.get('extra_link', '')
+        resource.city = acf.get('extra_location_city', '')
+        resource.country = acf.get('extra_location_country', '')
 
     if data.get('_links', {}).get('https://api.w.org/featuredmedia'):
         media_url = data.get('_links', {}).get('https://api.w.org/featuredmedia')[0].get('href')

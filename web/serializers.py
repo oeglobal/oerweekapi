@@ -41,7 +41,7 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'title', 'post_type', 'post_status', 'post_id',
                 'title', 'slug', 'content', 'contact', 'institution',
                 'form_language', 'license', 'link', 'categories',
-                'content_excerpt', 'image_url'
+                'content_excerpt', 'image_url', 'country', 'city',
                 )
         read_only_fields = ('content_excerpt',)
 
