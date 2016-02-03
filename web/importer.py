@@ -45,6 +45,12 @@ def import_resource(post_type, post_id):
         resource.city = acf.get('extra_location_city', '')
         resource.country = acf.get('extra_location_country', '')
 
+        if acf.get('event_time'):
+            resource.event_time = arrow.get(data.get('event_time')).datetime
+        resource.event_type = acf.get('event_type', '')
+        resource.event_source_datetime = acf.get('event_source_datetime', '')
+        resource.extra_source_timezone = acf.get('extra_source_timezone', '')
+
     if data.get('_links', {}).get('https://api.w.org/featuredmedia'):
         media_url = data.get('_links', {}).get('https://api.w.org/featuredmedia')[0].get('href')
         media_data = json.loads(requests.get(media_url, auth=auth).content.decode())

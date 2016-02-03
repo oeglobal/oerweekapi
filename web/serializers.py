@@ -42,6 +42,8 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
                 'title', 'slug', 'content', 'contact', 'institution',
                 'form_language', 'license', 'link', 'categories',
                 'content_excerpt', 'image_url', 'country', 'city',
+                'event_time', 'event_type',
+                'event_source_datetime', 'event_source_timezone'
                 )
         read_only_fields = ('content_excerpt',)
 

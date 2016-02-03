@@ -73,6 +73,12 @@ class Resource(TimeStampedModel, ReviewModel):
     city = models.CharField(max_length=255, blank=True)
     country = models.CharField(max_length=255, blank=True)
 
+    event_time = models.DateTimeField(blank=True, null=True)
+    event_type = models.CharField(max_length=255, blank=True)
+    event_source_datetime = models.CharField(max_length=255, blank=True)
+    event_source_timezone = models.CharField(max_length=255, blank=True)
+
+
     categories = models.ForeignKey(Category, null=True)
     tags = TaggableManager()
 
