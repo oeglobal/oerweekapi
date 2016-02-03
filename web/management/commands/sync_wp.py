@@ -34,5 +34,5 @@ class Command(BaseCommand):
                 import_resource(post_type=options.get('type'), post_id=i)
 
         if options.get('refresh'):
-            for resource in Resource.objects.all():
+            for resource in Resource.objects.all().order_by('-id'):
                 resource.refresh()

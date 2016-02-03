@@ -58,5 +58,8 @@ def import_resource(post_type, post_id):
         image_url = media_data.get('media_details', {}).get('sizes', {}).get('large', {}).get('source_url')
         if image_url:
             resource.image_url = image_url
+        else:
+            image_url = media_data.get('media_details', {}).get('sizes', {}).get('full', {}).get('source_url')
+            resource.image_url = image_url
 
     resource.save()
