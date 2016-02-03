@@ -48,7 +48,7 @@ def import_resource(post_type, post_id):
         if acf.get('event_time'):
             resource.event_time = arrow.get(data.get('event_time')).datetime
         resource.event_type = acf.get('event_type', '')
-        resource.event_source_datetime = acf.get('event_source_datetime', '')
+        resource.event_source_datetime = acf.get('extra_source_datetime', '')
         resource.extra_source_timezone = acf.get('extra_source_timezone', '')
 
     if data.get('_links', {}).get('https://api.w.org/featuredmedia'):
