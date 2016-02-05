@@ -2,6 +2,7 @@
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
@@ -41,32 +42,38 @@ class WordpressCallback(APIView):
 
         return Response('OK')
 
-class ResourceViewSet(viewsets.ModelViewSet):
+class ResourceEventMixin(generics.GenericAPIView):
+    def get_queryset(self):
+        if self.request.GET.get('slug'):
+            self.queryset = self.queryset.filter(slug=self.request.GET.get('slug'))
+
+        if self.request.GET.get('year'):
+            year = self.request.GET.get('year', '2016')
+            self.queryset = self.queryset.filter(created__year=year)
+
+        return self.queryset
+
+class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ResourceSerializer
 
     def get_queryset(self):
-        queryset = Resource.objects.filter(
+        self.queryset = Resource.objects.filter(
                         post_status='publish',
-                        created__year=2016,
                         post_type__in=['resource', 'project']
                     )
-        if self.request.GET.get('slug'):
-            queryset = queryset.filter(slug=self.request.GET.get('slug'))
+        super().get_queryset()
 
-        return queryset
+        return self.queryset
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ResourceSerializer
 
     def get_queryset(self):
-        queryset = Resource.objects.filter(
+        self.queryset = Resource.objects.filter(
                         post_status='publish',
-                        created__year=2016,
                         post_type__in=['event']
                     )
-        if self.request.GET.get('slug'):
-            queryset = queryset.filter(slug=self.request.GET.get('slug'))
 
-        return queryset
+        return self.queryset
