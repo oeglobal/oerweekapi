@@ -75,5 +75,6 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
                         post_status='publish',
                         post_type__in=['event']
                     )
+        super().get_queryset()
 
         return self.queryset
