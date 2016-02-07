@@ -19,13 +19,28 @@ class ReviewModel(models.Model):
         abstract = True
 
 class OpenPhoto(TimeStampedModel, ReviewModel):
-    title = models.CharField(max_length=255, blank=True)
-    url = models.URLField(max_length=255)
+    POST_STATUS_TYPES = Choices(
+        ('publish', 'Publish'),
+        ('draft', 'Draft'),
+        ('trash', 'Trash')
+    )
+
+    post_status = models.CharField(choices=POST_STATUS_TYPES, max_length=25, blank=True)
+    post_id = models.IntegerField(null=True)
+    title = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255, blank=True)
+    content = models.TextField(blank=True)
+
+    url = models.URLField(max_length=255, blank=True)
     country = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
 
     def __str__(self):
         return self.title
+
+    def refresh(self):
+        from .importer import import_openphoto
+        import_openphoto(post_id=self.post_id)
 
 class Page(TimeStampedModel):
     title = models.CharField(max_length=255)

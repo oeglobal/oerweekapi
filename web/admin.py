@@ -8,7 +8,9 @@ class ResourceAdmin(admin.ModelAdmin):
     search_fields = ('post_id', 'title')
 
 class OpenPhotoAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('post_id', 'title', 'post_status')
+    search_fields = ('content', 'url')
+
 
 class PageAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}

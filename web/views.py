@@ -5,15 +5,22 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.pagination import PageNumberPagination
 
-from .importer import import_resource
+from .importer import import_resource, import_openphoto
 from .models import OpenPhoto, Page, Resource
 from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
     PageSerializer, ResourceSerializer)
 
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 1000
+    page_size_query_param = 'page_size'
+    max_page_size = 10000
+
 class OpenPhotoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = OpenPhoto.objects.all()
+    queryset = OpenPhoto.objects.filter(post_status='publish',)
+    pagination_class = LargeResultsSetPagination
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'POST'] and self.request.user.is_authenticated():
@@ -36,9 +43,13 @@ class WordpressCallback(APIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def get(self, request, format=None):
-        if request.GET.get('post_type'):
-            import_resource(post_type=request.GET.get('post_type'),
-                            post_id=request.GET.get('post_id'))
+        post_type = request.GET.get('post_type')
+        if post_type:
+            if post_type == 'openphoto':
+                import_openphoto(post_id=request.GET.get('post_id'))
+            else:
+                import_resource(post_type=request.GET.get('post_type'),
+                                post_id=request.GET.get('post_id'))
 
         return Response('OK')
 

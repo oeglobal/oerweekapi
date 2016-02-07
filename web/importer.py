@@ -6,7 +6,7 @@ from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
 
-from .models import Resource
+from .models import Resource, OpenPhoto
 
 def import_resource(post_type, post_id):
     if post_type not in ['project', 'resource', 'event']:
@@ -63,3 +63,33 @@ def import_resource(post_type, post_id):
             resource.image_url = image_url
 
     resource.save()
+
+def import_openphoto(post_id):
+    auth = HTTPBasicAuth(settings.WP_USER, settings.WP_PASS)
+
+    url = "{}/wp/v2/{}/{}".format(settings.WP_API, 'openphoto', post_id)
+
+    data = json.loads(requests.get(url, auth=auth).content.decode())
+    print(url)
+    pprint(data)
+    if data.get('code') in ['rest_post_invalid_id', 'rest_forbidden', 'rest_no_route']:
+        return
+
+    try:
+        photo = OpenPhoto.objects.get(post_id=post_id)
+    except OpenPhoto.DoesNotExist:
+        photo = OpenPhoto(post_id=post_id)
+
+    photo.title = data.get('title').get('rendered')
+    photo.slug = data.get('slug')
+    photo.post_status = data.get('post_status')
+    photo.created = arrow.get(data.get('date')).datetime
+    photo.content = data.get('content')
+
+    acf = data.get('acf', {})
+    if acf:
+        photo.city = acf.get('openphoto_city', '')
+        photo.country = acf.get('openphoto_country', '')
+        photo.url = acf.get('openphoto_url', '')
+
+    photo.save()

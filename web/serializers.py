@@ -6,7 +6,8 @@ from .models import OpenPhoto, Page, Resource
 class OpenPhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OpenPhoto
-        fields = ('id', 'title', 'url', 'country', 'city', 'status')
+        fields = ('id', 'title', 'url', 'country', 'city', 'status',
+                'post_status', 'post_id', 'slug', 'content')
         read_only_fields = ('status', 'title')
 
     def save(self):
