@@ -92,4 +92,10 @@ def import_openphoto(post_id):
         photo.country = acf.get('openphoto_country', '')
         photo.url = acf.get('openphoto_url', '')
 
+        photomap = acf.get('openphoto_map')
+        if photomap:
+            photo.lat = photomap.get('lat')
+            photo.lng = photomap.get('lng')
+            photo.address = photomap.get('address', '')
+
     photo.save()

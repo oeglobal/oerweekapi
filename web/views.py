@@ -19,7 +19,7 @@ class LargeResultsSetPagination(PageNumberPagination):
 
 class OpenPhotoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    queryset = OpenPhoto.objects.filter(post_status='publish',)
+    queryset = OpenPhoto.objects.filter(post_status='publish',).order_by('?')
     pagination_class = LargeResultsSetPagination
 
     def get_serializer_class(self):

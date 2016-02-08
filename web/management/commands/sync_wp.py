@@ -42,7 +42,10 @@ class Command(BaseCommand):
                     import_resource(post_type=post_type, post_id=i)
 
         if options.get('refresh'):
-            for resource in Resource.objects.all().order_by('-id'):
-                resource.refresh()
-            for photo in OpenPhoto.objects.all().order_by('-id'):
-                photo.refresh()
+            if ( options.get('type') == 'resource' or not options.get('type') ):
+                for resource in Resource.objects.all().order_by('-id'):
+                    resource.refresh()
+
+            if ( options.get('type') == 'openphoto' or not options.get('type') ):
+                for photo in OpenPhoto.objects.all().order_by('-id'):
+                    photo.refresh()

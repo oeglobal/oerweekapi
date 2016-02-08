@@ -31,6 +31,10 @@ class OpenPhoto(TimeStampedModel, ReviewModel):
     slug = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=True)
 
+    lat = models.FloatField(null=True)
+    lng = models.FloatField(null=True)
+    address = models.CharField(blank=True, max_length=1024)
+
     url = models.URLField(max_length=255, blank=True)
     country = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -93,6 +97,9 @@ class Resource(TimeStampedModel, ReviewModel):
     event_source_datetime = models.CharField(max_length=255, blank=True)
     event_source_timezone = models.CharField(max_length=255, blank=True)
 
+    lat = models.FloatField(null=True)
+    lng = models.FloatField(null=True)
+    address = models.CharField(blank=True, max_length=1024)
 
     categories = models.ForeignKey(Category, null=True)
     tags = TaggableManager()

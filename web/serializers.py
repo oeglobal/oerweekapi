@@ -7,7 +7,8 @@ class OpenPhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OpenPhoto
         fields = ('id', 'title', 'url', 'country', 'city', 'status',
-                'post_status', 'post_id', 'slug', 'content')
+                'post_status', 'post_id', 'slug', 'content',
+                'lat', 'lng', 'address')
         read_only_fields = ('status', 'title')
 
     def save(self):
