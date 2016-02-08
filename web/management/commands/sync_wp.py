@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
 
         if options.get('maxto'):
-            for i in range(1, options.get('maxto') + 1):
+            for i in range(2000, options.get('maxto') + 1):
                 if post_type == 'openphoto':
                     import_openphoto(post_id=i)
                 else:
