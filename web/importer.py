@@ -20,6 +20,7 @@ def import_resource(post_type, post_id):
     print(url)
     pprint(data)
     if data.get('code') in ['rest_post_invalid_id', 'rest_forbidden', 'rest_no_route']:
+        print(data.get('code'))
         return
 
     try:
@@ -36,7 +37,7 @@ def import_resource(post_type, post_id):
     acf = data.get('acf', {})
 
     if acf:
-        resource.form_id = acf.get('form_id')
+        resource.form_id = acf.get('form_id') or None
         resource.contact = acf.get('extra_contact', '')
         resource.institution = acf.get('extra_institution', '')
         resource.form_language = acf.get('extra_language', '')

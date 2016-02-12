@@ -3,9 +3,10 @@ from django.contrib import admin
 from .models import OpenPhoto, Page, Resource
 
 class ResourceAdmin(admin.ModelAdmin):
-    list_display = ('post_id', 'title', 'post_status')
+    list_display = ('post_id', 'title', 'post_status', 'country')
     readonly_fields = ('created', 'modified',)
     search_fields = ('post_id', 'title')
+    list_filter = ('country', 'post_type')
 
 class OpenPhotoAdmin(admin.ModelAdmin):
     list_display = ('post_id', 'title', 'post_status')

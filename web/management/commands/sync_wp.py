@@ -42,7 +42,7 @@ class Command(BaseCommand):
                     import_resource(post_type=post_type, post_id=i)
 
         if options.get('refresh'):
-            if ( options.get('type') == 'resource' or not options.get('type') ):
+            if ( options.get('type') in ['resource', 'event', 'project'] or not options.get('type') ):
                 for resource in Resource.objects.all().order_by('-id'):
                     resource.refresh()
 

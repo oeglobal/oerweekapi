@@ -1,4 +1,5 @@
 # from django.shortcuts import render
+from itertools import groupby
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -89,3 +90,27 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
         super().get_queryset()
 
         return self.queryset
+
+class EventSummaryView(APIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get(self, request, format=None):
+        summary = {}
+
+        local_events = Resource.objects.filter(event_type='local').order_by('country')
+        groups = []
+        uniquekeys = []
+        for event in local_events:
+            print(event.country)
+
+        for k, g in groupby(local_events, lambda event: event.country):
+            groups.append(list(g))
+            uniquekeys.append(k)
+
+        from pprint import pprint
+        pprint(groups)
+        pprint(uniquekeys)
+
+        # summary['local_events'] = ResourceSerializer(local_events)
+
+        return Response(summary)
