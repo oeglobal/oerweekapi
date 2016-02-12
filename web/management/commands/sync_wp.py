@@ -43,7 +43,7 @@ class Command(BaseCommand):
 
         if options.get('refresh'):
             if ( options.get('type') in ['resource', 'event', 'project'] or not options.get('type') ):
-                for resource in Resource.objects.all().order_by('-id'):
+                for resource in Resource.objects.filter(post_type=options.get('type')).order_by('-id'):
                     resource.refresh()
 
             if ( options.get('type') == 'openphoto' or not options.get('type') ):

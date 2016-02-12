@@ -46,11 +46,23 @@ def import_resource(post_type, post_id):
         resource.city = acf.get('extra_location_city', '')
         resource.country = acf.get('extra_location_country', '')
 
-        if acf.get('event_time'):
-            resource.event_time = arrow.get(data.get('event_time')).datetime
         resource.event_type = acf.get('event_type', '')
         resource.event_source_datetime = acf.get('extra_source_datetime', '')
         resource.event_source_timezone = acf.get('extra_source_timezone', '')
+
+        if acf.get('event_time'):
+            resource.event_time = arrow.get(data.get('event_time')).datetime
+        else:
+            if (acf.get('extra_source_datetime')):
+                if resource.event_type == 'webinar':
+                    timezone = resource.event_source_timezone.split(')')[0].split(' ')[1]
+                    if len(timezone) == 5:
+                        timezone = "{}0{}".format(timezone[0], timezone[1:])
+                    event_time = "{} {}".format(acf.get('extra_source_datetime'), timezone)
+                    event_time_utc = arrow.get(event_time, 'YYYY-MM-DD HH:mm a ZZ').datetime
+                    resource.event_time = event_time_utc
+                else:
+                    resource.event_time = arrow.get(acf.get('extra_source_datetime')).datetime
 
     if data.get('_links', {}).get('https://api.w.org/featuredmedia'):
         media_url = data.get('_links', {}).get('https://api.w.org/featuredmedia')[0].get('href')

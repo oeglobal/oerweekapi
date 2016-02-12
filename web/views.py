@@ -1,5 +1,6 @@
 # from django.shortcuts import render
 from itertools import groupby
+import arrow
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -17,6 +18,12 @@ class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 10000
+
+class CustomResultsSetPagination(PageNumberPagination):
+    page_size = 9
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
 
 class OpenPhotoViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
@@ -81,6 +88,7 @@ class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ResourceSerializer
+    pagination_class = CustomResultsSetPagination
 
     def get_queryset(self):
         self.queryset = Resource.objects.filter(
@@ -88,6 +96,23 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
                         post_type__in=['event']
                     )
         super().get_queryset()
+
+        if self.request.GET.get('event_type') == 'local':
+            self.queryset = self.queryset \
+                                .filter(created__year=2016) \
+                                .exclude(country='',
+                                         event_type__in=('webinar', ''))
+
+        if self.request.GET.get('event_type') == 'online':
+            self.queryset = self.queryset \
+                                .filter(created__year=2016,
+                                        event_type__in=('webinar', ''))
+
+        if self.request.GET.get('date'):
+            date = arrow.get(self.request.GET.get('date'))
+            self.queryset = self.queryset.filter(event_time__year=date.year,
+                                                 event_time__month=date.month,
+                                                 event_time__day=date.day)
 
         return self.queryset
 
@@ -97,20 +122,23 @@ class EventSummaryView(APIView):
     def get(self, request, format=None):
         summary = {}
 
-        local_events = Resource.objects.filter(event_type='local').order_by('country')
-        groups = []
-        uniquekeys = []
-        for event in local_events:
-            print(event.country)
+        country_events = Resource.objects \
+                            .filter(post_type='event',
+                                    created__year=2016) \
+                            .exclude(country='',
+                                     event_type__in=('webinar', '')) \
+                            .order_by('country')
 
-        for k, g in groupby(local_events, lambda event: event.country):
-            groups.append(list(g))
-            uniquekeys.append(k)
+        country_groups = []
 
-        from pprint import pprint
-        pprint(groups)
-        pprint(uniquekeys)
+        for k, g in groupby(country_events, lambda event: event.country):
+            items = list(g)
+            events = []
+            for event in items:
+                serialized = ResourceSerializer(event, context={'request': request})
+                events.append(serialized.data)
+            country_groups.append(events)
 
-        # summary['local_events'] = ResourceSerializer(local_events)
+        summary['local_events'] = country_groups
 
         return Response(summary)

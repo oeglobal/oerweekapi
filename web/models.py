@@ -73,6 +73,14 @@ class Resource(TimeStampedModel, ReviewModel):
         ('trash', 'Trash')
     )
 
+    EVENT_TYPES = Choices(
+        ('conference/forum/discussion', 'conference/forum/discussion'),
+        ('webinar', 'webinar'),
+        ('workshop', 'workshop'),
+        ('local', 'local'),
+
+    )
+
     post_type = models.CharField(choices=RESOURCE_TYPES, max_length=25)
     post_status = models.CharField(choices=POST_STATUS_TYPES, max_length=25)
     post_id = models.IntegerField()
@@ -93,7 +101,7 @@ class Resource(TimeStampedModel, ReviewModel):
     country = models.CharField(max_length=255, blank=True)
 
     event_time = models.DateTimeField(blank=True, null=True)
-    event_type = models.CharField(max_length=255, blank=True)
+    event_type = models.CharField(max_length=255, blank=True, choices=EVENT_TYPES)
     event_source_datetime = models.CharField(max_length=255, blank=True)
     event_source_timezone = models.CharField(max_length=255, blank=True)
 
