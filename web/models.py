@@ -90,6 +90,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
     form_id = models.IntegerField(blank=True, null=True)
     contact = models.CharField(max_length=255, blank=True)
+    email = models.CharField(max_length=255, blank=True)
     institution = models.CharField(max_length=255, blank=True)
     form_language = models.CharField(max_length=255, blank=True)
     license = models.CharField(max_length=255, blank=True)
@@ -111,6 +112,8 @@ class Resource(TimeStampedModel, ReviewModel):
 
     categories = models.ForeignKey(Category, null=True)
     tags = TaggableManager()
+
+    notified = models.BooleanField(default=False)
 
     def refresh(self):
         from .importer import import_resource

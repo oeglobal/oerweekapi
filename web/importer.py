@@ -39,6 +39,7 @@ def import_resource(post_type, post_id):
     if acf:
         resource.form_id = acf.get('form_id') or None
         resource.contact = acf.get('extra_contact', '')
+        resource.email = acf.get('contact_email', '')
         resource.institution = acf.get('extra_institution', '')
         resource.form_language = acf.get('extra_language', '')
         resource.license = acf.get('extra_license', '')

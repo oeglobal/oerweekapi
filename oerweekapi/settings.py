@@ -75,6 +75,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'oerweekapi.wsgi.application'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
