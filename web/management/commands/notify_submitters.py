@@ -23,7 +23,7 @@ class Command(BaseCommand):
             resource.notified = True
             resource.save()
 
-            # send_mail('Your Open Education Week submission has been approved', plaintext.render({}), 'info@openeducationweek.org', [resource.email], fail_silently=False)
+            send_mail('Your Open Education Week submission has been approved', plaintext.render({}), 'info@openeducationweek.org', [resource.email], fail_silently=False)
 
             print('Emailed {} about #{}'.format(resource.email, resource.id))
 
