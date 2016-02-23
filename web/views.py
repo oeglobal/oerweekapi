@@ -1,6 +1,12 @@
-# from django.shortcuts import render
-from itertools import groupby
 import arrow
+import xlwt
+import urllib.parse
+from itertools import groupby
+
+from django.views.generic import View
+from django.http import HttpResponse
+
+from braces.views import LoginRequiredMixin
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -142,3 +148,62 @@ class EventSummaryView(APIView):
         summary['local_events'] = country_groups
 
         return Response(summary)
+
+class ExportResources(LoginRequiredMixin, View):
+    def get(self, request):
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=oerweek-resources.xls'
+
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet("Resources")
+
+        row_num = 0
+
+        columns = [
+            (u"ID", 2000),
+            (u"Resource Type", 6000),
+            (u"Title", 6000),
+            (u"Organization", 8000),
+            (u"Contact name", 8000),
+            (u"Email", 8000),
+            (u"OEW URL", 8000),
+            (u"Resources URL", 8000),
+            (u"Event Type", 8000),
+            (u"Date and Time", 8000),
+        ]
+
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num][0], font_style)
+            ws.col(col_num).width = columns[col_num][1]
+
+        font_style = xlwt.XFStyle()
+        font_style.alignment.wrap = 1
+
+        for resource in Resource.objects.filter(post_status='publish'):
+            row_num += 1
+
+            event_time = ''
+            if resource.event_time:
+                event_time = resource.event_time.strftime('%c')
+
+            row = [
+                resource.post_id,
+                resource.post_type,
+                urllib.parse.unquote(resource.title),
+                resource.institution,
+                resource.contact,
+                resource.email,
+                resource.get_full_url(),
+                resource.link,
+                resource.event_type,
+                event_time,
+            ]
+
+            for col_num in range(len(row)):
+                ws.write(row_num, col_num, row[col_num], font_style)
+
+        wb.save(response)
+        return response

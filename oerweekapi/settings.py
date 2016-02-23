@@ -122,4 +122,6 @@ JWT_AUTH = {
 
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
+LOGIN_URL = '/api-auth/login/'
+
 from .localsettings import *

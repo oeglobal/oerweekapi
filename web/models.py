@@ -118,3 +118,9 @@ class Resource(TimeStampedModel, ReviewModel):
     def refresh(self):
         from .importer import import_resource
         import_resource(post_type=self.post_type, post_id=self.post_id)
+
+    def get_full_url(self):
+        if self.post_type == 'event':
+            return "http://www.openeducationweek.org/events/{}".format(self.slug)
+
+        return "http://www.openeducationweek.org/resources/{}".format(self.slug)
