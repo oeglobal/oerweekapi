@@ -187,7 +187,7 @@ class ExportResources(LoginRequiredMixin, View):
 
             event_time = ''
             if resource.event_time:
-                event_time = resource.event_time.strftime('%c')
+                event_time = resource.event_time.strftime('%Y-%m-%d %H:%M')
 
             row = [
                 resource.post_id,
