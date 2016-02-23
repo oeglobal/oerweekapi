@@ -2,6 +2,7 @@ import arrow
 import xlwt
 import urllib.parse
 from itertools import groupby
+from datetime import datetime
 
 from django.views.generic import View
 from django.http import HttpResponse
@@ -157,6 +158,8 @@ class ExportResources(LoginRequiredMixin, View):
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
 
+        datetime_style = xlwt.easyxf(num_format_str='dd/mm/yyyy hh:mm')
+
         wb = xlwt.Workbook(encoding='utf-8')
         ws = wb.add_sheet("Resources")
 
@@ -187,7 +190,8 @@ class ExportResources(LoginRequiredMixin, View):
 
             event_time = ''
             if resource.event_time:
-                event_time = resource.event_time.strftime('%Y-%m-%d %H:%M')
+                # event_time = resource.event_time.strftime('%Y-%m-%d %H:%M')
+                event_time = resource.event_time.replace(tzinfo=None)
 
             row = [
                 resource.post_id,
@@ -203,7 +207,10 @@ class ExportResources(LoginRequiredMixin, View):
             ]
 
             for col_num in range(len(row)):
-                ws.write(row_num, col_num, row[col_num], font_style)
+                if isinstance(row[col_num], datetime):
+                    ws.write(row_num, col_num, row[col_num], datetime_style)
+                else:
+                    ws.write(row_num, col_num, row[col_num], font_style)
 
         wb.save(response)
         return response
