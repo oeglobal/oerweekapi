@@ -1,5 +1,6 @@
 appnope==0.1.0
 arrow==0.7.0
+contextlib2==0.5.1
 decorator==4.0.6
 Django==1.9.1
 django-braces==1.8.1
@@ -30,6 +31,7 @@ ptyprocess==0.5
 PyJWT==1.4.0
 python-dateutil==2.4.2
 python-oembed==0.2.4
+raven==5.10.2
 requests==2.9.1
 requests-oauthlib==0.6.0
 simplegeneric==0.8.1
