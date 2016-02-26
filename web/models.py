@@ -96,7 +96,7 @@ class Resource(TimeStampedModel, ReviewModel):
     license = models.CharField(max_length=255, blank=True)
     link = models.CharField(max_length=255, blank=True)
 
-    image_url = models.URLField(blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True, max_length=500)
 
     city = models.CharField(max_length=255, blank=True)
     country = models.CharField(max_length=255, blank=True)
