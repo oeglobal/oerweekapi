@@ -59,9 +59,12 @@ def import_resource(post_type, post_id):
                     timezone = resource.event_source_timezone.split(')')[0].split(' ')[1]
                     if len(timezone) == 5:
                         timezone = "{}0{}".format(timezone[0], timezone[1:])
-                    event_time = "{} {}".format(acf.get('extra_source_datetime'), timezone)
-                    event_time_utc = arrow.get(event_time, 'YYYY-MM-DD HH:mm a ZZ').datetime
-                    resource.event_time = event_time_utc
+                    try:
+                        event_time = "{} {}".format(acf.get('extra_source_datetime'), timezone)
+                        event_time_utc = arrow.get(event_time, 'YYYY-MM-DD HH:mm a ZZ').datetime
+                        resource.event_time = event_time_utc
+                    except arrow.parser.ParserError:
+                        pass
                 else:
                     resource.event_time = arrow.get(acf.get('extra_source_datetime')).datetime
 
