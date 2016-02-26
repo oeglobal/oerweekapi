@@ -52,7 +52,7 @@ def import_resource(post_type, post_id):
         resource.event_source_timezone = acf.get('extra_source_timezone', '')
 
         if acf.get('event_time'):
-            resource.event_time = arrow.get(data.get('event_time')).datetime
+            resource.event_time = arrow.get(acf.get('event_time')).datetime
         else:
             if (acf.get('extra_source_datetime')):
                 if resource.event_type == 'webinar':
