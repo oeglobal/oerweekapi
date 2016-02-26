@@ -18,7 +18,7 @@ def import_resource(post_type, post_id):
 
     data = json.loads(requests.get(url, auth=auth).content.decode())
     print(url)
-    pprint(data)
+    # pprint(data)
     if data.get('code') in ['rest_post_invalid_id', 'rest_forbidden', 'rest_no_route']:
         print(data.get('code'))
         return
@@ -85,7 +85,7 @@ def import_openphoto(post_id):
 
     data = json.loads(requests.get(url, auth=auth).content.decode())
     print(url)
-    pprint(data)
+    # pprint(data)
     if data.get('code') in ['rest_post_invalid_id', 'rest_forbidden', 'rest_no_route']:
         return
 
