@@ -6,6 +6,7 @@ from datetime import datetime
 
 from django.views.generic import View
 from django.http import HttpResponse
+from django.db.models import Q
 
 from braces.views import LoginRequiredMixin
 
@@ -107,13 +108,12 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
         if self.request.GET.get('event_type') == 'local':
             self.queryset = self.queryset \
                                 .filter(created__year=2016) \
-                                .exclude(country='',
-                                         event_type__in=('webinar', ''))
+                                .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
 
         if self.request.GET.get('event_type') == 'online':
             self.queryset = self.queryset \
                                 .filter(created__year=2016,
-                                        event_type__in=('webinar', ''))
+                                        event_type__in=('webinar', 'online'))
 
         if self.request.GET.get('date'):
             date = arrow.get(self.request.GET.get('date'))
