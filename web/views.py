@@ -176,6 +176,8 @@ class ExportResources(LoginRequiredMixin, View):
             (u"Resources URL", 8000),
             (u"Event Type", 8000),
             (u"Date and Time", 8000),
+            (u"Country", 8000),
+            (u"City", 8000),
         ]
 
         for col_num in range(len(columns)):
@@ -204,6 +206,8 @@ class ExportResources(LoginRequiredMixin, View):
                 resource.link,
                 resource.event_type,
                 event_time,
+                resource.country,
+                resource.city,
             ]
 
             for col_num in range(len(row)):
