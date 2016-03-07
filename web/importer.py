@@ -51,14 +51,14 @@ def import_resource(post_type, post_id):
         resource.event_source_datetime = acf.get('extra_source_datetime', '')
         resource.event_source_timezone = acf.get('extra_source_timezone', '')
 
+        if resource.event_type and not resource.event_source_timezone:
+            resource.event_source_timezone = '(GMT -0:00) London, Western Europe, Lisbon, Casablanca'
+
         if acf.get('event_time'):
             resource.event_time = arrow.get(acf.get('event_time')).datetime
         else:
             if (acf.get('extra_source_datetime')):
                 if resource.event_type == 'webinar':
-                    if not resource.event_source_timezone:
-                        resource.event_source_timezone = '(GMT -0:00) London, Western Europe, Lisbon, Casablanca'
-
                     timezone = resource.event_source_timezone.split(')')[0].split(' ')[1]
                     if len(timezone) == 5:
                         timezone = "{}0{}".format(timezone[0], timezone[1:])
