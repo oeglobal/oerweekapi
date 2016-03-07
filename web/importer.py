@@ -66,7 +66,11 @@ def import_resource(post_type, post_id):
                     except arrow.parser.ParserError:
                         pass
                 else:
-                    resource.event_time = arrow.get(acf.get('extra_source_datetime')).datetime
+                    try:
+                        resource.event_time = arrow.get(acf.get('extra_source_datetime')).datetime
+                    except arrow.parser.ParserError:
+                        resource.event_time = arrow.get(acf.get('extra_source_datetime'),
+                                                            ['MM/DD/YYYY HH:mm p']).datetime
 
     if data.get('_links', {}).get('https://api.w.org/featuredmedia'):
         media_url = data.get('_links', {}).get('https://api.w.org/featuredmedia')[0].get('href')
