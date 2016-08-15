@@ -1,12 +1,12 @@
 import json
 import requests
 import arrow
-from pprint import pprint
+
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
 
-from .models import Resource, OpenPhoto
+from .models import Resource, OpenPhoto, Category
 
 def import_resource(post_type, post_id):
     if post_type not in ['project', 'resource', 'event']:
@@ -123,3 +123,66 @@ def import_openphoto(post_id):
             photo.address = photomap.get('address', '')
 
     photo.save()
+
+def import_submission(data):
+    print(data)
+    resource = Resource(post_id=0)
+    resource.post_status ='draft'
+    resource.contact = '{} {}'.format(data.get('firstname'), data.get('lastname'))
+    resource.email = data.get('email')
+    resource.institution = data.get('institution')
+    resource.institution_url = data.get('institutionurl')
+
+    resource.country = data.get('country')
+    resource.city = data.get('city')
+
+    resource.title = data.get('title')
+    resource.content = data.get('description')
+    resource.form_language = data.get('language')
+    resource.link = data.get('link', '')
+
+    if data.get('license'):
+        resource.license = data.get('license', '')
+
+    print(data.get('contributiontype'))
+    if data.get('contributiontype') in ['event_local', 'event_online']:
+        if data.get('contributiontype') == 'event_local' :
+            resource.post_type = 'event'
+            resource.event_online = False
+            resource.event_directions = data.get('directions')
+            resource.event_type = data.get('localeventtype')
+
+        elif data.get('contributiontype') == 'event_online':
+            resource.post_type = 'event'
+            resource.event_online = True
+
+        resource.archive_planned = data.get('archive')
+        resource.event_time = arrow.get(data.get('datetime')).datetime
+
+        resource.save()
+    else:
+        resource.post_type = data.get('contributiontype')
+        resource.save()
+
+    # Categories
+    if data.get('is_primary'):
+        cat, is_created = Category.objects.get_or_create(
+                                wp_id=0,
+                                name='Primary or Secondary Education',
+                                slug='primary-or-secondary-education')
+        resource.categories.add(cat)
+
+    if data.get('is_higher'):
+        cat, is_created = Category.objects.get_or_create(
+                                wp_id=0,
+                                name='Higher Education',
+                                slug='higher-education')
+        resource.categories.add(cat)
+
+    if data.get('is_community'):
+        cat, is_created = Category.objects.get_or_create(
+                                wp_id=0,
+                                name='Community and Technical Colleges',
+                                slug='community-and-technical-colleges')
+        resource.categories.add(cat)
+

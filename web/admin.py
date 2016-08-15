@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import OpenPhoto, Page, Resource
+from .models import OpenPhoto, Page, Resource, Category
 
 class ResourceAdmin(admin.ModelAdmin):
     list_display = ('post_id', 'title', 'post_status', 'country', 'event_type')
@@ -12,11 +12,14 @@ class OpenPhotoAdmin(admin.ModelAdmin):
     list_display = ('post_id', 'title', 'post_status')
     search_fields = ('content', 'url')
 
-
 class PageAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     change_form_template = 'web/admin/change_form.html'
 
+class CategoryAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Resource, ResourceAdmin)
 admin.site.register(OpenPhoto, OpenPhotoAdmin)
 admin.site.register(Page, PageAdmin)
+admin.site.register(Category, CategoryAdmin)

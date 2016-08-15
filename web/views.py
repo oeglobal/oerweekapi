@@ -17,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 
-from .importer import import_resource, import_openphoto
+from .importer import import_resource, import_openphoto, import_submission
 from .models import OpenPhoto, Page, Resource
 from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
     PageSerializer, ResourceSerializer)
@@ -66,6 +66,14 @@ class WordpressCallback(APIView):
             else:
                 import_resource(post_type=request.GET.get('post_type'),
                                 post_id=request.GET.get('post_id'))
+
+        return Response('OK')
+
+class SubmissionView(APIView):
+    def post(self, request, format=None):
+        print(request.data)
+        # import ipdb; ipdb.set_trace()
+        import_submission(data=request.data)
 
         return Response('OK')
 
