@@ -37,6 +37,7 @@ INSTALLED_APPS = (
 
     'django_wysiwyg',
     'ckeditor',
+    'mail_templated',
 
     'model_utils',
     'corsheaders',

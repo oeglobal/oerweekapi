@@ -125,7 +125,6 @@ def import_openphoto(post_id):
     photo.save()
 
 def import_submission(data):
-    print(data)
     resource = Resource(post_id=0)
     resource.post_status ='draft'
     resource.contact = '{} {}'.format(data.get('firstname'), data.get('lastname'))
@@ -144,7 +143,6 @@ def import_submission(data):
     if data.get('license'):
         resource.license = data.get('license', '')
 
-    print(data.get('contributiontype'))
     if data.get('contributiontype') in ['event_local', 'event_online']:
         if data.get('contributiontype') == 'event_local' :
             resource.post_type = 'event'
@@ -186,3 +184,4 @@ def import_submission(data):
                                 slug='community-and-technical-colleges')
         resource.categories.add(cat)
 
+    return resource

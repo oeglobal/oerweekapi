@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
 import json
+
+from django.core import mail
+
 from web.models import Resource
 
 @pytest.mark.client
@@ -30,7 +33,7 @@ def test_submission_event_online(rf, client, db):
     }
 
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
-    assert 'OK' in str(response.content), 'Remote Event Submission failed'
+    assert data.get('title') in str(response.content), 'Remote Event Submission failed'
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
@@ -71,7 +74,7 @@ def test_submission_event_local(rf, client, db):
         'is_community': True,
     }
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
-    assert 'OK' in str(response.content), 'Local Event Submission failed'
+    assert data.get('datetime') in str(response.content), 'Local Event Submission failed'
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
@@ -98,13 +101,13 @@ def test_submission_oer_resource(rf, client, db):
         'is_higher': True,
         'institutionurl': 'http://www.oeconsortium.org',
         'language': 'English',
-        'datetime': 'Mon Mar 27 2017 00:00:00 GMT+0200 (CEST)',
+        'datetime': '2017-03-27T00:00:00+02:00',
         'license': 'CC-BY-SA',
         'directions': None
     }
 
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
-    assert 'OK' in str(response.content), 'OER Resource Submission failed'
+    assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
@@ -124,7 +127,7 @@ def test_submission_project(rf, client, db):
         'institutionurl': 'http://www.oeconsortium.org/',
         'language': 'English',
         'is_higher': False,
-        'datetime': 'Mon Mar 27 2017 00:00:00 GMT+0200 (CEST)',
+        'datetime': '2017-03-27T00:00:00+02:00',
         'license': 'Freely accessible',
         'institution': 'OEC',
         'localeventtype': None,
@@ -138,7 +141,73 @@ def test_submission_project(rf, client, db):
     }
 
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
-    assert 'OK' in str(response.content), 'OER Resource Submission failed'
+    assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
+
+@pytest.mark.client
+@pytest.mark.django_db
+def test_submission_online_event_other(rf, client, db):
+    data = {
+        'license': None,
+        'institution': '',
+        'archive': True,
+        'contributiontype': 'event_online',
+        'localeventtype': 'other',
+        'city': 'London',
+        'directions': None,
+        'is_primary': False,
+        'is_higher': True,
+        'language': 'English',
+        'lastname': 'Jones',
+        'country': 'United Kingdom',
+        'email': 'mike2@example.com',
+        'firstname': 'Mike',
+        'title': 'Car info limit field length to 50 chars',
+        'datetime': '2017-03-27T00:00:00+02:00',
+        'eventother': 'Twitter Chat',
+        'link': '',
+        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\nconsequat. Duis aute irure dolor in reprehenderit in voluptate velit esse\ncillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non\nproident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        'is_community': False,
+        'institutionurl': ''
+    }
+
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    assert data.get('title') in str(response.content), 'OER Resource Submission failed'
+
+    resource = Resource.objects.latest('id')
+    assert resource.title == data.get('title')
+
+@pytest.mark.client
+@pytest.mark.django_db
+def test_submission_email(rf, client, db):
+    data = {
+        'license': None,
+        'institution': '',
+        'archive': True,
+        'contributiontype': 'event_online',
+        'localeventtype': 'other',
+        'city': 'London',
+        'directions': None,
+        'is_primary': False,
+        'is_higher': True,
+        'language': 'English',
+        'lastname': 'Jones',
+        'country': 'United Kingdom',
+        'email': 'mike2@example.com',
+        'firstname': 'Mike',
+        'title': 'Car info limit field length to 50 chars',
+        'datetime': '2017-03-27T00:00:00+02:00',
+        'eventother': 'Twitter Chat',
+        'link': '',
+        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\nconsequat. Duis aute irure dolor in reprehenderit in voluptate velit esse\ncillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non\nproident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        'is_community': False,
+        'institutionurl': ''
+    }
+
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    assert data.get('title') in str(response.content), 'OER Resource Submission failed'
+
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].subject == 'OEW: We have received your submission'

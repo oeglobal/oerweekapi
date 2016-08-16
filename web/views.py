@@ -1,6 +1,7 @@
 import arrow
 import xlwt
 import urllib.parse
+import json
 from itertools import groupby
 from datetime import datetime
 
@@ -18,6 +19,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_resource, import_openphoto, import_submission
+from .utils import send_submission_email
 from .models import OpenPhoto, Page, Resource
 from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
     PageSerializer, ResourceSerializer)
@@ -72,10 +74,11 @@ class WordpressCallback(APIView):
 class SubmissionView(APIView):
     def post(self, request, format=None):
         print(request.data)
-        # import ipdb; ipdb.set_trace()
-        import_submission(data=request.data)
+        resource = import_submission(data=request.data)
 
-        return Response('OK')
+        send_submission_email(resource)
+
+        return Response(json.dumps(request.data), content_type='application/json')
 
 class ResourceEventMixin(generics.GenericAPIView):
     def get_queryset(self):
