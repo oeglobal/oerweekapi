@@ -132,6 +132,7 @@ class Resource(TimeStampedModel, ReviewModel):
     tags = TaggableManager()
 
     notified = models.BooleanField(default=False)
+    raw_post = models.TextField(blank=True)
 
     def refresh(self):
         if self.post_id != 0:

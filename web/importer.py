@@ -126,6 +126,8 @@ def import_openphoto(post_id):
 
 def import_submission(data):
     resource = Resource(post_id=0)
+    resource.raw_post = json.dumps(data)
+
     resource.post_status ='draft'
 
     resource.firstname = data.get('firstname')
@@ -146,8 +148,6 @@ def import_submission(data):
     if data.get('license'):
         resource.license = data.get('license', '')
 
-    print(data.get('contributiontype'))
-
     if data.get('contributiontype') in ['event_local', 'event_online']:
         if data.get('contributiontype') == 'event_local' :
             resource.post_type = 'event'
@@ -159,6 +159,9 @@ def import_submission(data):
             resource.post_type = 'event'
             resource.event_online = True
 
+        if resource.localeventtype in ['other_local', 'other_online']:
+            resource.event_other_text = resource.get('eventother')
+
         resource.archive_planned = data.get('archive')
         resource.event_time = arrow.get(data.get('datetime')).datetime
 
@@ -168,21 +171,21 @@ def import_submission(data):
         resource.save()
 
     # Categories
-    if data.get('is_primary'):
+    if data.get('is-primary'):
         cat, is_created = Category.objects.get_or_create(
                                 wp_id=0,
                                 name='Primary or Secondary Education',
                                 slug='primary-or-secondary-education')
         resource.categories.add(cat)
 
-    if data.get('is_higher'):
+    if data.get('is-higher'):
         cat, is_created = Category.objects.get_or_create(
                                 wp_id=0,
                                 name='Higher Education',
                                 slug='higher-education')
         resource.categories.add(cat)
 
-    if data.get('is_community'):
+    if data.get('is-community'):
         cat, is_created = Category.objects.get_or_create(
                                 wp_id=0,
                                 name='Community and Technical Colleges',

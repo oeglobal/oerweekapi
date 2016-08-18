@@ -1,5 +1,6 @@
 from django.template.defaultfilters import truncatewords_html
 from rest_framework import serializers
+import arrow
 
 from .models import OpenPhoto, Page, Resource
 
@@ -45,7 +46,7 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
                 'form_language', 'license', 'link', 'categories',
                 'content_excerpt', 'image_url', 'country', 'city',
                 'event_time', 'event_type',
-                'event_source_datetime', 'event_source_timezone'
+                'event_source_datetime', 'event_source_timezone',
                 )
         read_only_fields = ('content_excerpt',)
 
@@ -54,7 +55,47 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     institutionurl = serializers.CharField(source='institution_url')
+    language = serializers.CharField(source='form_language')
+    contributiontype = serializers.SerializerMethodField()
+    localeventtype = serializers.CharField(source='event_type')
+    eventother = serializers.CharField(source='event_other_text')
+    description = serializers.CharField(source='content')
+    datetime = serializers.SerializerMethodField()
+
+    directions = serializers.CharField(source='event_directions')
+    archive = serializers.BooleanField(source='archive_planned')
+
+    is_primary = serializers.SerializerMethodField()
+    is_higher = serializers.SerializerMethodField()
+    is_community = serializers.SerializerMethodField()
 
     class Meta:
         model = Resource
-        fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl')
+        fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
+                  'country', 'city', 'language', 'contributiontype', 'localeventtype', 'eventother',
+                  'title', 'description', 'datetime', 'directions', 'link', 'archive',
+                  'is_primary', 'is_higher', 'is_community', 'license',
+                  'post_status'
+                )
+
+    def get_contributiontype(self, obj):
+        if obj.post_type == 'event' and obj.event_online:
+            return 'event_online'
+
+        if obj.post_type == 'event' and not obj.event_online:
+            return 'event_local'
+
+        return obj.post_type
+
+    def get_datetime(self, obj):
+        if obj.event_time:
+            return arrow.get(obj.event_time).isoformat()
+
+    def get_is_primary(self, obj):
+        return obj.categories.filter(slug='primary-or-secondary-education').exists()
+
+    def get_is_higher(self, obj):
+        return obj.categories.filter(slug='higher-education').exists()
+
+    def get_is_community(self, obj):
+        return obj.categories.filter(slug='community-and-technical-colleges').exists()
