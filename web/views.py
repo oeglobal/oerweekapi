@@ -11,18 +11,19 @@ from django.db.models import Q
 
 from braces.views import LoginRequiredMixin
 
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_resource, import_openphoto, import_submission
 from .utils import send_submission_email
 from .models import OpenPhoto, Page, Resource
 from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
-    PageSerializer, ResourceSerializer)
+    PageSerializer, ResourceSerializer, SubmissionResourceSerializer)
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
@@ -36,20 +37,16 @@ class CustomResultsSetPagination(PageNumberPagination):
 
 
 class OpenPhotoViewSet(viewsets.ModelViewSet):
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
-    # permission_classes = [IsAuthenticated,]
     queryset = OpenPhoto.objects.filter(post_status='publish',).order_by('?')
     pagination_class = LargeResultsSetPagination
 
     def get_serializer_class(self):
-        print(self.request.user.is_authenticated())
         if self.request.method in ['PUT', 'POST'] and self.request.user.is_authenticated():
             return AuthenticatedOpenPhotoSerializer
 
         return OpenPhotoSerializer
 
 class PageViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = PageSerializer
 
     def get_queryset(self):
@@ -60,8 +57,6 @@ class PageViewSet(viewsets.ModelViewSet):
         return queryset
 
 class WordpressCallback(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
     def get(self, request, format=None):
         post_type = request.GET.get('post_type')
         if post_type:
@@ -73,14 +68,19 @@ class WordpressCallback(APIView):
 
         return Response('OK')
 
-class SubmissionView(APIView):
-    def post(self, request, format=None):
-        print(request.data)
+class SubmissionViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SubmissionResourceSerializer
+
+    def get_queryset(self):
+        return Resource.objects.all()
+
+    def create(self, request, *args, **kwargs):
         resource = import_submission(data=request.data)
 
         send_submission_email(resource)
 
-        return Response(json.dumps(request.data), content_type='application/json')
+        return Response(json.dumps(request.data), status=status.HTTP_201_CREATED)
 
 class ResourceEventMixin(generics.GenericAPIView):
     def get_queryset(self):
@@ -94,7 +94,6 @@ class ResourceEventMixin(generics.GenericAPIView):
         return self.queryset
 
 class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ResourceSerializer
 
     def get_queryset(self):
@@ -107,7 +106,6 @@ class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
         return self.queryset
 
 class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = ResourceSerializer
     pagination_class = CustomResultsSetPagination
 
@@ -137,8 +135,6 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
         return self.queryset
 
 class EventSummaryView(APIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
     def get(self, request, format=None):
         summary = {}
 

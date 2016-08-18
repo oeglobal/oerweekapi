@@ -51,3 +51,8 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_content_excerpt(self, obj):
         return truncatewords_html(obj.content, 30)
+
+class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Resource
+        fields = ('id', 'title')

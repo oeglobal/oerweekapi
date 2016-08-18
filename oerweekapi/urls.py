@@ -6,17 +6,18 @@ import rest_framework_jwt.views
 
 from web.views import (OpenPhotoViewSet, PageViewSet, WordpressCallback,
     ResourceViewSet, EventViewSet, EventSummaryView, ExportResources,
-    SubmissionView)
+    SubmissionViewSet)
 
 router = routers.DefaultRouter()
 router.register(r'openphotos', OpenPhotoViewSet)
 router.register(r'pages', PageViewSet, base_name='Page')
 router.register(r'resources', ResourceViewSet, base_name='Resource')
 router.register(r'events', EventViewSet, base_name='Event')
+router.register(r'submission', SubmissionViewSet, base_name='Submission')
 
 urlpatterns = [
     url(r'^api/', include(router.urls)),
-    url(r'^api/submission/', SubmissionView.as_view()),
+    # url(r'^api/submission/', SubmissionView.as_view()),
     url(r'^api/wp-callback/', WordpressCallback.as_view()),
     url(r'^api/events-summary/', EventSummaryView.as_view()),
 

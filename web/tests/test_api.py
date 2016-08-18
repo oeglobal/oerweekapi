@@ -8,7 +8,7 @@ from web.models import Resource
 
 @pytest.mark.client
 @pytest.mark.django_db
-def test_submission_event_online(rf, client, db):
+def test_submission_event_online(rf, client, db, normal_user):
     data = {
         'email': 'mike.jones@example.com',
         'language': 'German',
@@ -32,6 +32,7 @@ def test_submission_event_online(rf, client, db):
         'localeventtype': 'webinar'
     }
 
+    client.login(username='user', password='password')
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'Remote Event Submission failed'
 
@@ -41,7 +42,7 @@ def test_submission_event_online(rf, client, db):
 
 @pytest.mark.client
 @pytest.mark.django_db
-def test_submission_event_local(rf, client, db):
+def test_submission_event_local(rf, client, db, normal_user):
     data = {
         'contributiontype': 'event_local',
         'localeventtype': 'workshop',
@@ -73,6 +74,8 @@ def test_submission_event_local(rf, client, db):
         'is_higher': True,
         'is_community': True,
     }
+
+    client.login(username='user', password='password')
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('datetime') in str(response.content), 'Local Event Submission failed'
 
@@ -82,7 +85,7 @@ def test_submission_event_local(rf, client, db):
 
 @pytest.mark.client
 @pytest.mark.django_db
-def test_submission_oer_resource(rf, client, db):
+def test_submission_oer_resource(rf, client, db, normal_user):
     data = {
         'city': 'Washington, DC',
         'is_primary': False,
@@ -106,6 +109,7 @@ def test_submission_oer_resource(rf, client, db):
         'directions': None
     }
 
+    client.login(username='user', password='password')
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
@@ -116,7 +120,7 @@ def test_submission_oer_resource(rf, client, db):
 
 @pytest.mark.client
 @pytest.mark.django_db
-def test_submission_project(rf, client, db):
+def test_submission_project(rf, client, db, normal_user):
     data = {
         'archive': False,
         'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod\ntempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,\nquis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\nconsequat. Duis aute irure dolor in reprehenderit in voluptate velit esse\ncillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non\nproident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
@@ -140,15 +144,17 @@ def test_submission_project(rf, client, db):
         'contributiontype': 'project'
     }
 
+    client.login(username='user', password='password')
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
 
+
 @pytest.mark.client
 @pytest.mark.django_db
-def test_submission_online_event_other(rf, client, db):
+def test_submission_online_event_other(rf, client, db, normal_user):
     data = {
         'license': None,
         'institution': '',
@@ -173,6 +179,7 @@ def test_submission_online_event_other(rf, client, db):
         'institutionurl': ''
     }
 
+    client.login(username='user', password='password')
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
@@ -181,7 +188,7 @@ def test_submission_online_event_other(rf, client, db):
 
 @pytest.mark.client
 @pytest.mark.django_db
-def test_submission_email(rf, client, db):
+def test_submission_email(rf, client, db, normal_user):
     data = {
         'license': None,
         'institution': '',
@@ -206,6 +213,7 @@ def test_submission_email(rf, client, db):
         'institutionurl': ''
     }
 
+    client.login(username='user', password='password')
     response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
