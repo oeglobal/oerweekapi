@@ -97,6 +97,10 @@ class Resource(TimeStampedModel, ReviewModel):
 
     form_id = models.IntegerField(blank=True, null=True)
     contact = models.CharField(max_length=255, blank=True)
+
+    firstname = models.CharField(max_length=255, blank=True)
+    lastname = models.CharField(max_length=255, blank=True)
+
     email = models.CharField(max_length=255, blank=True)
     institution = models.CharField(max_length=255, blank=True)
     institution_url = models.CharField(max_length=255, blank=True)
@@ -149,5 +153,8 @@ class Resource(TimeStampedModel, ReviewModel):
                 if next:
                     self.slug += '-{0}'.format(next)
                 next += 1
+
+        if self.firstname or self.lastname:
+            self.contact = '{} {}'.format(self.firstname, self.lastname)
 
         super().save(*args, **kwargs)

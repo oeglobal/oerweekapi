@@ -16,7 +16,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_resource, import_openphoto, import_submission
@@ -69,15 +69,14 @@ class WordpressCallback(APIView):
         return Response('OK')
 
 class SubmissionViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     serializer_class = SubmissionResourceSerializer
 
     def get_queryset(self):
-        return Resource.objects.all()
+        return Resource.objects.filter(created__gte=datetime(2016, 6, 1))
 
     def create(self, request, *args, **kwargs):
-        resource = import_submission(data=request.data)
-
+        resource = import_submission(data=request.data.get('data').get('attributes'))
         send_submission_email(resource)
 
         return Response(json.dumps(request.data), status=status.HTTP_201_CREATED)

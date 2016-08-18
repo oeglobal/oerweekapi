@@ -53,6 +53,8 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
         return truncatewords_html(obj.content, 30)
 
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
+    institutionurl = serializers.CharField(source='institution_url')
+
     class Meta:
         model = Resource
-        fields = ('id', 'title')
+        fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl')

@@ -9,31 +9,30 @@ from web.models import Resource
 @pytest.mark.client
 @pytest.mark.django_db
 def test_submission_event_online(rf, client, db, normal_user):
-    data = {
-        'email': 'mike.jones@example.com',
-        'language': 'German',
-        'contributiontype': 'event_online',
-        'is_community': True,
-        'institution': 'OEC',
-        'institutionurl': 'http://www.oeconsortium.org',
-        'directions': None,
-        'archive': True,
-        'link': 'http://oeconsortium.org/events/online/20',
-        'description': 'Description of Webinar about OER',
-        'country': 'United States',
-        'lastname': 'Jones',
-        'is_primary': False,
-        'firstname': 'Mike',
-        'license': None,
-        'datetime': '2017-03-27T19:00:00+02:00',
-        'is_higher': True,
-        'title': 'Webinar about OER',
-        'city': 'New York',
-        'localeventtype': 'webinar'
-    }
+    data = {'email': 'mike.jones@example.com',
+            'language': 'German',
+            'contributiontype': 'event_online',
+            'is_community': True,
+            'institution': 'OEC',
+            'institutionurl': 'http://www.oeconsortium.org',
+            'directions': None,
+            'archive': True,
+            'link': 'http://oeconsortium.org/events/online/20',
+            'description': 'Description of Webinar about OER',
+            'country': 'United States',
+            'lastname': 'Jones',
+            'is_primary': False,
+            'firstname': 'Mike',
+            'license': None,
+            'datetime': '2017-03-27T19:00:00+02:00',
+            'is_higher': True,
+            'title': 'Webinar about OER',
+            'city': 'New York',
+            'localeventtype': 'webinar'
+        }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
     assert data.get('title') in str(response.content), 'Remote Event Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -76,7 +75,7 @@ def test_submission_event_local(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
     assert data.get('datetime') in str(response.content), 'Local Event Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -110,7 +109,7 @@ def test_submission_oer_resource(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -145,7 +144,7 @@ def test_submission_project(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -180,7 +179,7 @@ def test_submission_online_event_other(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -214,7 +213,7 @@ def test_submission_email(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     assert len(mail.outbox) == 1

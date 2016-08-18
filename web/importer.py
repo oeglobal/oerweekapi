@@ -127,7 +127,10 @@ def import_openphoto(post_id):
 def import_submission(data):
     resource = Resource(post_id=0)
     resource.post_status ='draft'
-    resource.contact = '{} {}'.format(data.get('firstname'), data.get('lastname'))
+
+    resource.firstname = data.get('firstname')
+    resource.lastname = data.get('lastname')
+
     resource.email = data.get('email')
     resource.institution = data.get('institution')
     resource.institution_url = data.get('institutionurl')
@@ -142,6 +145,8 @@ def import_submission(data):
 
     if data.get('license'):
         resource.license = data.get('license', '')
+
+    print(data.get('contributiontype'))
 
     if data.get('contributiontype') in ['event_local', 'event_online']:
         if data.get('contributiontype') == 'event_local' :
