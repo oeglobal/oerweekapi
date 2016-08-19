@@ -134,8 +134,8 @@ def import_submission(data):
     resource.lastname = data.get('lastname')
 
     resource.email = data.get('email')
-    resource.institution = data.get('institution')
-    resource.institution_url = data.get('institutionurl')
+    resource.institution = data.get('institution', '')
+    resource.institution_url = data.get('institutionurl', '')
 
     resource.country = data.get('country')
     resource.city = data.get('city')
