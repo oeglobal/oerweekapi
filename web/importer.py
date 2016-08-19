@@ -134,8 +134,8 @@ def import_submission(data):
     resource.lastname = data.get('lastname')
 
     resource.email = data.get('email')
-    resource.institution = data.get('institution', '')
-    resource.institution_url = data.get('institutionurl', '')
+    resource.institution = data.get('institution') or ''
+    resource.institution_url = data.get('institutionurl') or ''
 
     resource.country = data.get('country')
     resource.city = data.get('city')
@@ -143,7 +143,7 @@ def import_submission(data):
     resource.title = data.get('title')
     resource.content = data.get('description')
     resource.form_language = data.get('language')
-    resource.link = data.get('link', '')
+    resource.link = data.get('link') or ''
 
     if data.get('license'):
         resource.license = data.get('license', '')
@@ -161,6 +161,9 @@ def import_submission(data):
 
         if data.get('localeventtype') in ['other_local', 'other_online']:
             resource.event_other_text = resource.get('eventother')
+
+        if data.get('facilitator'):
+            resource.event_facilitator = data.get('facilitator')
 
         resource.archive_planned = data.get('archive')
         resource.event_time = arrow.get(data.get('datetime')).datetime

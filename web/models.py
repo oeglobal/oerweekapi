@@ -120,6 +120,7 @@ class Resource(TimeStampedModel, ReviewModel):
     event_source_timezone = models.CharField(max_length=255, blank=True)
     event_directions = models.CharField(max_length=255, blank=True)
     event_other_text = models.CharField(max_length=255, blank=True)
+    event_facilitator = models.CharField(max_length=255, blank=True)
 
     archive_planned = models.BooleanField(default=False)
     archive_link = models.CharField(max_length=255, blank=True)
