@@ -76,7 +76,8 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         return Resource.objects.filter(created__gte=datetime(2016, 6, 1))
 
     def create(self, request, *args, **kwargs):
-        resource = import_submission(data=request.data.get('data').get('attributes'))
+        print(request.data)
+        resource = import_submission(data=request.data)
         send_submission_email(resource)
 
         return Response(json.dumps(request.data), status=status.HTTP_201_CREATED)

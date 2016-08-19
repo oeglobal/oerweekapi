@@ -159,7 +159,7 @@ def import_submission(data):
             resource.post_type = 'event'
             resource.event_online = True
 
-        if resource.localeventtype in ['other_local', 'other_online']:
+        if data.get('localeventtype') in ['other_local', 'other_online']:
             resource.event_other_text = resource.get('eventother')
 
         resource.archive_planned = data.get('archive')

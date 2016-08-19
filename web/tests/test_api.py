@@ -32,7 +32,7 @@ def test_submission_event_online(rf, client, db, normal_user):
         }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'Remote Event Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -75,7 +75,7 @@ def test_submission_event_local(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('datetime') in str(response.content), 'Local Event Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -109,7 +109,7 @@ def test_submission_oer_resource(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -144,7 +144,7 @@ def test_submission_project(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -179,7 +179,7 @@ def test_submission_online_event_other(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -213,7 +213,7 @@ def test_submission_email(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission/', content_type='application/json', data=json.dumps({'data': {'attributes': data}}))
+    response = client.post('/api/submission/', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     assert len(mail.outbox) == 1
