@@ -243,7 +243,7 @@ class TwitterSearchResults(APIView):
                                   access_token_key=settings.TWITTER_ACCESS_TOKEN_KEY,
                                   access_token_secret=settings.TWITTER_ACCESS_TOKEN_SECRET)
 
-        api_results = twitter_api.GetSearch(raw_query="q=%23oeglobal&src=typd&&result_type=recent&count=100")
+        api_results = twitter_api.GetSearch(raw_query="q=%23openeducationwk&src=typd&&result_type=mixed&count=100")
 
         results = []
         for res in api_results:
