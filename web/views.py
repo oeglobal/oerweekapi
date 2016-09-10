@@ -2,12 +2,16 @@ import arrow
 import xlwt
 import urllib.parse
 import json
+import twitter
+
 from itertools import groupby
 from datetime import datetime
 
 from django.views.generic import View
 from django.http import HttpResponse
 from django.db.models import Q
+from django.conf import settings
+from django.core.cache import cache
 
 from braces.views import LoginRequiredMixin
 
@@ -16,7 +20,7 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_resource, import_openphoto, import_submission
@@ -227,3 +231,26 @@ class ExportResources(LoginRequiredMixin, View):
 
         wb.save(response)
         return response
+
+class TwitterSearchResults(APIView):
+    def get(self, request, format=None):
+        if cache.get('twitter', None):
+            results = cache.get('twitter')
+            return Response(results)
+
+        twitter_api = twitter.Api(consumer_key=settings.TWITTER_API_KEY,
+                                  consumer_secret=settings.TWITTER_API_SECRET,
+                                  access_token_key=settings.TWITTER_ACCESS_TOKEN_KEY,
+                                  access_token_secret=settings.TWITTER_ACCESS_TOKEN_SECRET)
+
+        api_results = twitter_api.GetSearch(raw_query="q=%23oeglobal&src=typd&&result_type=recent&count=100")
+
+        results = []
+        for res in api_results:
+            if not res.retweeted_status:
+                results.append({'screen_name': res.user.screen_name,
+                                'id_str': res.id_str
+                                })
+
+        cache.set('twitter', results, 60*5)
+        return Response(results)

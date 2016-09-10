@@ -15,6 +15,7 @@ django-vanilla-views==1.0.4
 django-wysiwyg==0.7.1
 djangorestframework==3.4.4
 djangorestframework-jwt==1.8.0
+future==0.15.2
 gnureadline==6.3.3
 gunicorn==19.4.5
 html5lib==0.9999999
@@ -35,6 +36,7 @@ pytest==2.9.2
 pytest-django==2.9.1
 python-dateutil==2.4.2
 python-oembed==0.2.4
+python-twitter==3.1
 raven==5.10.2
 requests==2.9.1
 requests-oauthlib==0.6.0
