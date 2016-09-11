@@ -243,7 +243,7 @@ class TwitterSearchResults(APIView):
                                   access_token_key=settings.TWITTER_ACCESS_TOKEN_KEY,
                                   access_token_secret=settings.TWITTER_ACCESS_TOKEN_SECRET)
 
-        api_results = twitter_api.GetSearch(raw_query="q=%23openeducationwk&src=typd&&result_type=mixed&count=100")
+        api_results = twitter_api.GetSearch(raw_query="q=%23openeducationwk%2C%20OR%20%23oeglobal&result_type=mixed&count=100")
 
         results = []
         for res in api_results:
@@ -251,6 +251,7 @@ class TwitterSearchResults(APIView):
                 results.append({'screen_name': res.user.screen_name,
                                 'id_str': res.id_str
                                 })
+        results = results[:4]
 
         cache.set('twitter', results, 60*5)
         return Response(results)
