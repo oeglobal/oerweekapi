@@ -27,12 +27,14 @@ from .importer import import_resource, import_openphoto, import_submission
 from .utils import send_submission_email
 from .models import OpenPhoto, Page, Resource
 from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
-    PageSerializer, ResourceSerializer, SubmissionResourceSerializer)
+                          PageSerializer, ResourceSerializer, SubmissionResourceSerializer)
+
 
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 10000
+
 
 class CustomResultsSetPagination(PageNumberPagination):
     page_size = 9
@@ -50,6 +52,7 @@ class OpenPhotoViewSet(viewsets.ModelViewSet):
 
         return OpenPhotoSerializer
 
+
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
 
@@ -60,8 +63,9 @@ class PageViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+
 class WordpressCallback(APIView):
-    def get(self, request, format=None):
+    def get(self, request):
         post_type = request.GET.get('post_type')
         if post_type:
             if post_type == 'openphoto':
@@ -71,6 +75,7 @@ class WordpressCallback(APIView):
                                 post_id=request.GET.get('post_id'))
 
         return Response('OK')
+
 
 class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
@@ -86,6 +91,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
         return Response(json.dumps(request.data), status=status.HTTP_201_CREATED)
 
+
 class ResourceEventMixin(generics.GenericAPIView):
     def get_queryset(self):
         if self.request.GET.get('slug'):
@@ -96,6 +102,7 @@ class ResourceEventMixin(generics.GenericAPIView):
             self.queryset = self.queryset.filter(created__year=year)
 
         return self.queryset
+
 
 class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
@@ -108,6 +115,7 @@ class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
         super().get_queryset()
 
         return self.queryset
+
 
 class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
@@ -138,6 +146,7 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 
         return self.queryset
 
+
 class EventSummaryView(APIView):
     def get(self, request, format=None):
         summary = {}
@@ -162,6 +171,7 @@ class EventSummaryView(APIView):
         summary['local_events'] = country_groups
 
         return Response(summary)
+
 
 class ExportResources(LoginRequiredMixin, View):
     def get(self, request):
@@ -231,6 +241,7 @@ class ExportResources(LoginRequiredMixin, View):
 
         wb.save(response)
         return response
+
 
 class TwitterSearchResults(APIView):
     def get(self, request, format=None):
