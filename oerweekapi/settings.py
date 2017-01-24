@@ -1,5 +1,6 @@
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -111,8 +112,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_LEEWAY': 60*5*60,
     'JWT_VERIFY_EXPIRATION': False,
-    'JWT_VERIFY': False
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
 
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"

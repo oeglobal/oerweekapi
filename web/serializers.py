@@ -4,12 +4,13 @@ import arrow
 
 from .models import OpenPhoto, Page, Resource
 
+
 class OpenPhotoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OpenPhoto
         fields = ('id', 'title', 'url', 'country', 'city', 'status',
-                'post_status', 'post_id', 'slug', 'content',
-                'lat', 'lng', 'address')
+                  'post_status', 'post_id', 'slug', 'content',
+                  'lat', 'lng', 'address')
         read_only_fields = ('status', 'title')
 
     def save(self):
@@ -25,16 +26,19 @@ class OpenPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
         return self.instance
 
+
 class AuthenticatedOpenPhotoSerializer(OpenPhotoSerializer):
     class Meta:
         model = OpenPhoto
         fields = ('id', 'title', 'url', 'country', 'city', 'status')
         read_only_fields = ('title',)
 
+
 class PageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Page
         fields = ('id', 'title', 'slug', 'content')
+
 
 class ResourceSerializer(serializers.HyperlinkedModelSerializer):
     content_excerpt = serializers.SerializerMethodField()
@@ -42,27 +46,28 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Resource
         fields = ('id', 'title', 'post_type', 'post_status', 'post_id',
-                'title', 'slug', 'content', 'contact', 'institution',
-                'form_language', 'license', 'link', 'categories',
-                'content_excerpt', 'image_url', 'country', 'city',
-                'event_time', 'event_type',
-                'event_source_datetime', 'event_source_timezone',
+                  'title', 'slug', 'content', 'contact', 'institution',
+                  'form_language', 'license', 'link', 'categories',
+                  'content_excerpt', 'image_url', 'country', 'city',
+                  'event_time', 'event_type',
+                  'event_source_datetime', 'event_source_timezone',
                 )
         read_only_fields = ('content_excerpt',)
 
     def get_content_excerpt(self, obj):
         return truncatewords_html(obj.content, 30)
 
+
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
-    institutionurl = serializers.CharField(source='institution_url')
+    institutionurl = serializers.CharField(source='institution_url', allow_blank=True)
     language = serializers.CharField(source='form_language')
     contributiontype = serializers.SerializerMethodField()
-    localeventtype = serializers.CharField(source='event_type')
-    eventother = serializers.CharField(source='event_other_text')
+    localeventtype = serializers.CharField(source='event_type', allow_blank=True)
+    eventother = serializers.CharField(source='event_other_text', allow_blank=True)
     description = serializers.CharField(source='content')
     datetime = serializers.SerializerMethodField()
 
-    directions = serializers.CharField(source='event_directions')
+    directions = serializers.CharField(source='event_directions', allow_blank=True)
     archive = serializers.BooleanField(source='archive_planned')
 
     is_primary = serializers.SerializerMethodField()

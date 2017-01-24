@@ -6,6 +6,7 @@ from django.utils.text import slugify
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
+
 class ReviewModel(models.Model):
     REVIEW_CHOICES = Choices(
         ('new', 'New Entry'),
@@ -18,6 +19,7 @@ class ReviewModel(models.Model):
 
     class Meta:
         abstract = True
+
 
 class OpenPhoto(TimeStampedModel, ReviewModel):
     POST_STATUS_TYPES = Choices(
@@ -47,6 +49,7 @@ class OpenPhoto(TimeStampedModel, ReviewModel):
         from .importer import import_openphoto
         import_openphoto(post_id=self.post_id)
 
+
 class Page(TimeStampedModel):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255)
@@ -55,11 +58,13 @@ class Page(TimeStampedModel):
     def __str__(self):
         return self.title
 
+
 class Category(TimeStampedModel):
-    '''Wordpress Category Taxonomy'''
+    """Wordpress Category Taxonomy"""
     wp_id = models.IntegerField()
     name = models.CharField(max_length=255)
     slug = models.CharField(max_length=255)
+
 
 class Resource(TimeStampedModel, ReviewModel):
     RESOURCE_TYPES = Choices(
