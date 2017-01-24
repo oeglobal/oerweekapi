@@ -80,7 +80,7 @@ class WordpressCallback(APIView):
 class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = SubmissionResourceSerializer
-    page_size_query_param = 'page_size'
+    pagination_class = CustomResultsSetPagination
 
     def get_queryset(self):
         return Resource.objects.filter(created__gte=datetime(2016, 6, 1))
@@ -90,9 +90,6 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         send_submission_email(resource)
 
         return Response(json.dumps(request.data), status=status.HTTP_201_CREATED)
-
-    # def update(self, request, *args, **kwargs):
-    #     print(request.data)
 
 
 class ResourceEventMixin(generics.GenericAPIView):
