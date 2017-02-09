@@ -8,6 +8,7 @@ from django.conf import settings
 
 from .models import Resource, OpenPhoto, Category
 
+
 def import_resource(post_type, post_id):
     if post_type not in ['project', 'resource', 'event']:
         return
@@ -73,7 +74,7 @@ def import_resource(post_type, post_id):
                         resource.event_time = arrow.get(acf.get('extra_source_datetime')).datetime
                     except arrow.parser.ParserError:
                         resource.event_time = arrow.get(acf.get('extra_source_datetime'),
-                                                            ['MM/DD/YYYY HH:mm p']).datetime
+                                                        ['MM/DD/YYYY HH:mm p']).datetime
 
     if data.get('_links', {}).get('https://api.w.org/featuredmedia'):
         media_url = data.get('_links', {}).get('https://api.w.org/featuredmedia')[0].get('href')
@@ -87,6 +88,7 @@ def import_resource(post_type, post_id):
             resource.image_url = image_url
 
     resource.save()
+
 
 def import_openphoto(post_id):
     auth = HTTPBasicAuth(settings.WP_USER, settings.WP_PASS)
@@ -124,11 +126,12 @@ def import_openphoto(post_id):
 
     photo.save()
 
+
 def import_submission(data):
     resource = Resource(post_id=0)
     resource.raw_post = json.dumps(data)
 
-    resource.post_status ='draft'
+    resource.post_status = 'draft'
 
     resource.firstname = data.get('firstname')
     resource.lastname = data.get('lastname')
@@ -177,23 +180,23 @@ def import_submission(data):
     # Categories
     if data.get('is-primary'):
         cat, is_created = Category.objects.get_or_create(
-                                wp_id=0,
-                                name='Primary or Secondary Education',
-                                slug='primary-or-secondary-education')
+            wp_id=0,
+            name='Primary or Secondary Education',
+            slug='primary-or-secondary-education')
         resource.categories.add(cat)
 
     if data.get('is-higher'):
         cat, is_created = Category.objects.get_or_create(
-                                wp_id=0,
-                                name='Higher Education',
-                                slug='higher-education')
+            wp_id=0,
+            name='Higher Education',
+            slug='higher-education')
         resource.categories.add(cat)
 
     if data.get('is-community'):
         cat, is_created = Category.objects.get_or_create(
-                                wp_id=0,
-                                name='Community and Technical Colleges',
-                                slug='community-and-technical-colleges')
+            wp_id=0,
+            name='Community and Technical Colleges',
+            slug='community-and-technical-colleges')
         resource.categories.add(cat)
 
     return resource
