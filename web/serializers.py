@@ -42,6 +42,7 @@ class PageSerializer(serializers.HyperlinkedModelSerializer):
 
 class ResourceSerializer(serializers.HyperlinkedModelSerializer):
     content_excerpt = serializers.SerializerMethodField()
+    image_url = serializers.CharField(source='get_image_url')
 
     class Meta:
         model = Resource
@@ -74,13 +75,15 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     is_higher = serializers.SerializerMethodField()
     is_community = serializers.SerializerMethodField()
 
+    image_url = serializers.CharField(source='get_image_url')
+
     class Meta:
         model = Resource
         fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
                   'country', 'city', 'language', 'contributiontype', 'localeventtype', 'eventother',
                   'title', 'description', 'datetime', 'directions', 'link', 'archive',
                   'is_primary', 'is_higher', 'is_community', 'license',
-                  'post_status'
+                  'post_status', 'image_url'
                 )
 
     def get_contributiontype(self, obj):

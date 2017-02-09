@@ -161,6 +161,12 @@ class Resource(TimeStampedModel, ReviewModel):
 
         return "http://www.openeducationweek.org/resources/{}".format(self.slug)
 
+    def get_image_url(self):
+        if self.image_url:
+            return self.image_url
+        if self.image:
+            return self.image.url
+
     def save(self, *args, **kwargs):
         if not self.slug:
             next = 0
