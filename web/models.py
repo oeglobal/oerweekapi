@@ -1,7 +1,14 @@
+import hashlib
+import requests
+from urllib.parse import urlencode
+from base64 import urlsafe_b64encode
+
 from django.db import models
 from django.conf import settings
-from taggit.managers import TaggableManager
+from django.core.files.base import ContentFile
 from django.utils.text import slugify
+
+from taggit.managers import TaggableManager
 
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
@@ -80,7 +87,7 @@ class Resource(TimeStampedModel, ReviewModel):
     )
 
     EVENT_TYPES = Choices(
-        #duplicated due to legacy choices
+        # duplicated due to legacy choices
         ('conference/forum/discussion', 'Conference/forum/discussion'),
         ('conference/seminar', 'Conference/seminar'),
         ('workshop', 'Workshop'),
@@ -88,9 +95,9 @@ class Resource(TimeStampedModel, ReviewModel):
         ('other_local', 'other_local'),
         ('local', 'local'),
 
-        ('webinar', 'Webinar'), # online
-        ('discussion', 'Online Discussion'), #online
-        ('other_online', 'Other - Online'), #online
+        ('webinar', 'Webinar'),  # online
+        ('discussion', 'Online Discussion'),  # online
+        ('other_online', 'Other - Online'),  # online
     )
 
     post_type = models.CharField(choices=RESOURCE_TYPES, max_length=25)
@@ -130,15 +137,18 @@ class Resource(TimeStampedModel, ReviewModel):
     archive_planned = models.BooleanField(default=False)
     archive_link = models.CharField(max_length=255, blank=True)
 
-    lat = models.FloatField(null=True)
-    lng = models.FloatField(null=True)
+    lat = models.FloatField(null=True, blank=True)
+    lng = models.FloatField(null=True, blank=True)
     address = models.CharField(blank=True, max_length=1024)
 
-    categories = models.ManyToManyField(Category)
-    tags = TaggableManager()
+    categories = models.ManyToManyField(Category, blank=True)
+    tags = TaggableManager(blank=True)
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
+
+    screenshot_status = models.CharField(blank=True, default='', max_length=64)
+    image = models.ImageField(upload_to='images/', blank=True)
 
     def refresh(self):
         if self.post_id != 0:
@@ -165,3 +175,34 @@ class Resource(TimeStampedModel, ReviewModel):
             self.contact = '{} {}'.format(self.firstname, self.lastname)
 
         super().save(*args, **kwargs)
+
+    def get_screenshot(self):
+        def webshrinker_v2(access_key, secret_key, url, params):
+            params['key'] = access_key
+            request = "thumbnails/v2/{}?{}".format(urlsafe_b64encode(url.encode()).decode(), urlencode(params, True))
+            signed_request = hashlib.md5("{}:{}".format(secret_key, request).encode('utf-8')).hexdigest()
+
+            return "https://api.webshrinker.com/{}&hash={}".format(request, signed_request)
+
+        if self.image:
+            self.screenshot_status = 'DONE'
+            return self.save()
+
+        if self.link and self.screenshot_status in ['', 'PENDING']:
+            api_url = webshrinker_v2(settings.WEBSHRINKER_KEY, settings.WEBSHRINKEY_SECRET, self.link,
+                                     {'size': '3xlarge'})
+            print(api_url)
+            response = requests.get(api_url)
+
+            status_code = response.status_code
+
+            if status_code == 200:
+                self.image.save('screenshot_{}.png'.format(self.pk), ContentFile(response.content))
+                self.screenshot_status = 'DONE'
+                self.save()
+            elif status_code == 202:
+                self.screenshot_status = 'PENDING'
+                self.save()
+            else:
+                print(response.status_code)
+                raise NotImplementedError

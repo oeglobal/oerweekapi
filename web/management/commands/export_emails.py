@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from web.models import Resource
 
+
 class Command(BaseCommand):
     help = "Exports emails"
 
