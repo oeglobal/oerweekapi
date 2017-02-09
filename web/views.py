@@ -98,7 +98,7 @@ class ResourceEventMixin(generics.GenericAPIView):
             self.queryset = self.queryset.filter(slug=self.request.GET.get('slug'))
 
         if self.request.GET.get('year'):
-            year = self.request.GET.get('year', '2016')
+            year = self.request.GET.get('year', '2017')
             self.queryset = self.queryset.filter(created__year=year)
 
         return self.queryset
@@ -130,12 +130,12 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 
         if self.request.GET.get('event_type') == 'local':
             self.queryset = self.queryset \
-                                .filter(created__year=2016) \
+                                .filter(created__year=2017) \
                                 .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
 
         if self.request.GET.get('event_type') == 'online':
             self.queryset = self.queryset \
-                                .filter(created__year=2016,
+                                .filter(created__year=2017,
                                         event_type__in=('webinar', 'online'))
 
         if self.request.GET.get('date'):
