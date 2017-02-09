@@ -149,7 +149,7 @@ def import_submission(data):
         resource.license = data.get('license', '')
 
     if data.get('contributiontype') in ['event_local', 'event_online']:
-        if data.get('contributiontype') == 'event_local' :
+        if data.get('contributiontype') == 'event_local':
             resource.post_type = 'event'
             resource.event_online = False
             resource.event_directions = data.get('directions')
@@ -158,6 +158,7 @@ def import_submission(data):
         elif data.get('contributiontype') == 'event_online':
             resource.post_type = 'event'
             resource.event_online = True
+            resource.event_type = data.get('localeventtype')
 
         if data.get('localeventtype') in ['other_local', 'other_online']:
             resource.event_other_text = resource.get('eventother')

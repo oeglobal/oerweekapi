@@ -37,6 +37,8 @@ def test_submission_event_online(rf, client, db, normal_user):
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
+    assert resource.content == data.get('description')
+    assert resource.event_type == 'webinar'
 
 
 @pytest.mark.client
@@ -80,6 +82,7 @@ def test_submission_event_local(rf, client, db, normal_user):
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
+    assert resource.event_type == 'workshop'
 
 
 @pytest.mark.client
