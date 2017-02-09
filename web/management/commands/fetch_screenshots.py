@@ -6,6 +6,6 @@ class Command(BaseCommand):
     help = "Exports emails"
 
     def handle(self, *args, **options):
-        for resource in Resource.objects.filter(screenshot_status='', created__year=2017, status__in=['draft', 'publish']):
+        for resource in Resource.objects.filter(screenshot_status='', created__year=2017, post_status__in=['draft', 'publish']):
             print(resource.id)
             resource.get_screenshot()
