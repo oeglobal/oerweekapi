@@ -15,12 +15,9 @@ from django.core.cache import cache
 
 from braces.views import LoginRequiredMixin
 
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import status, permissions, viewsets, generics
 from rest_framework.views import APIView
-from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_resource, import_openphoto, import_submission
@@ -77,8 +74,22 @@ class WordpressCallback(APIView):
         return Response('OK')
 
 
+class SubmissionPermission(permissions.BasePermission):
+    message = 'For changing submissions, you have to be logged-in'
+
+    def has_permission(self, request, view):
+        # We allow POST, since it's a `add` method, so users can submit form.
+        if request.method == 'POST' or request.method == 'OPTIONS':
+            return True
+
+        if request.user.is_authenticated():
+            return True
+
+        return False
+
+
 class SubmissionViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (SubmissionPermission,)
     serializer_class = SubmissionResourceSerializer
     pagination_class = CustomResultsSetPagination
 

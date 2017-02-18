@@ -155,7 +155,7 @@ def import_submission(data):
         if data.get('contributiontype') == 'event_local':
             resource.post_type = 'event'
             resource.event_online = False
-            resource.event_directions = data.get('directions')
+            resource.event_directions = data.get('directions', '')
             resource.event_type = data.get('localeventtype')
 
         elif data.get('contributiontype') == 'event_online':

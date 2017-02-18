@@ -68,14 +68,14 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     description = serializers.CharField(source='content')
     datetime = serializers.SerializerMethodField()
 
-    directions = serializers.CharField(source='event_directions', allow_blank=True)
+    directions = serializers.CharField(source='event_directions', allow_blank=True, allow_null=True)
     archive = serializers.BooleanField(source='archive_planned')
 
     is_primary = serializers.SerializerMethodField()
     is_higher = serializers.SerializerMethodField()
     is_community = serializers.SerializerMethodField()
 
-    image_url = serializers.CharField(source='get_image_url')
+    image_url = serializers.CharField(source='get_image_url', allow_blank=True, allow_null=True)
 
     class Meta:
         model = Resource
