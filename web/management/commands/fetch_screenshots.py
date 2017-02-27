@@ -3,7 +3,7 @@ from web.models import Resource
 
 
 class Command(BaseCommand):
-    help = "Exports emails"
+    help = "Fetches screenshots"
 
     def handle(self, *args, **options):
         for resource in Resource.objects.filter(screenshot_status__in=['', 'PENDING'], modified__year=2017, post_status__in=['draft', 'publish']):

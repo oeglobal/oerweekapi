@@ -210,5 +210,5 @@ class Resource(TimeStampedModel, ReviewModel):
                 self.screenshot_status = 'PENDING'
                 self.save()
             else:
-                print(response.status_code)
+                print('Status code {}'.format(response.status_code))
                 raise NotImplementedError
