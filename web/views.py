@@ -110,7 +110,7 @@ class ResourceEventMixin(generics.GenericAPIView):
 
         if self.request.GET.get('year'):
             year = self.request.GET.get('year', '2017')
-            self.queryset = self.queryset.filter(modified__year=year)
+            self.queryset = self.queryset.filter(year=year)
 
         return self.queryset
 

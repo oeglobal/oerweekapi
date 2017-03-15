@@ -150,6 +150,8 @@ class Resource(TimeStampedModel, ReviewModel):
     screenshot_status = models.CharField(blank=True, default='', max_length=64)
     image = models.ImageField(upload_to='images/', blank=True)
 
+    year = models.IntegerField(blank=True, null=True)
+
     def refresh(self):
         if self.post_id != 0:
             from .importer import import_resource

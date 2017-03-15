@@ -188,6 +188,7 @@ def test_submission_online_event_other(rf, client, db, normal_user):
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
 
+
 @pytest.mark.client
 @pytest.mark.django_db
 def test_submission_email(rf, client, db, normal_user):
