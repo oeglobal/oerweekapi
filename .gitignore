@@ -67,4 +67,4 @@ localsettings.py
 /static/
 /media/
 .DS_Store
-
+.idea/
