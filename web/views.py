@@ -97,10 +97,14 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         return Resource.objects.filter(created__gte=datetime(2016, 6, 1))
 
     def create(self, request, *args, **kwargs):
+        # a hack, this should be moved into serializer
         resource = import_submission(data=request.data)
         send_submission_email(resource)
 
-        return Response(json.dumps(request.data), status=status.HTTP_201_CREATED)
+        data = request.data
+        data['id'] = resource.id
+
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class ResourceEventMixin(generics.GenericAPIView):

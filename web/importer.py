@@ -128,6 +128,10 @@ def import_openphoto(post_id):
 
 
 def import_submission(data):
+    # data = data.get('data', {}).get('attributes', {})
+    from pprint import pprint
+    pprint(data)
+
     resource = Resource(post_id=0)
     resource.raw_post = json.dumps(data)
 
@@ -147,29 +151,30 @@ def import_submission(data):
     resource.content = data.get('description')
     resource.form_language = data.get('language')
     resource.link = data.get('link') or ''
+    resource.linkwebroom = data.get('linkwebroom') or ''
+    resource.opentags = data.get('opentags') or []
 
     if data.get('license'):
         resource.license = data.get('license', '')
 
-    if data.get('contributiontype') in ['event_local', 'event_online']:
-        if data.get('contributiontype') == 'event_local':
+    if data.get('contributiontype') in ['event']:
+        if data.get('eventtype') == 'local':
             resource.post_type = 'event'
             resource.event_online = False
             resource.event_directions = data.get('directions', '')
-            resource.event_type = data.get('localeventtype')
+            resource.event_type = 'local'
 
-        elif data.get('contributiontype') == 'event_online':
+        elif data.get('eventtype') == 'online':
             resource.post_type = 'event'
             resource.event_online = True
-            resource.event_type = data.get('localeventtype')
+            resource.event_type = 'online'
 
         if data.get('localeventtype') in ['other_local', 'other_online']:
-            resource.event_other_text = resource.get('eventother')
+            resource.event_other_text = 'online'
 
         if data.get('facilitator'):
             resource.event_facilitator = data.get('facilitator')
 
-        resource.archive_planned = data.get('archive')
         resource.event_time = arrow.get(data.get('datetime')).datetime
 
         resource.save()

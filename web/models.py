@@ -7,6 +7,7 @@ from django.db import models
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
+from django.contrib.postgres.fields import ArrayField
 
 from taggit.managers import TaggableManager
 
@@ -98,6 +99,7 @@ class Resource(TimeStampedModel, ReviewModel):
         ('webinar', 'Webinar'),  # online
         ('discussion', 'Online Discussion'),  # online
         ('other_online', 'Other - Online'),  # online
+        ('online', 'Online Event')
     )
 
     post_type = models.CharField(choices=RESOURCE_TYPES, max_length=25)
@@ -119,6 +121,7 @@ class Resource(TimeStampedModel, ReviewModel):
     form_language = models.CharField(max_length=255, blank=True)
     license = models.CharField(max_length=255, blank=True)
     link = models.CharField(max_length=255, blank=True)
+    linkwebroom = models.CharField(max_length=255, blank=True)
 
     image_url = models.URLField(blank=True, null=True, max_length=500)
 
@@ -143,6 +146,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
     categories = models.ManyToManyField(Category, blank=True)
     tags = TaggableManager(blank=True)
+    opentags = ArrayField(models.CharField(max_length=255, blank=True))
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
