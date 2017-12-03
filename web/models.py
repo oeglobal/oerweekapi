@@ -154,7 +154,7 @@ class Resource(TimeStampedModel, ReviewModel):
     screenshot_status = models.CharField(blank=True, default='', max_length=64)
     image = models.ImageField(upload_to='images/', blank=True)
 
-    year = models.IntegerField(blank=True, null=True, default=2017)
+    year = models.IntegerField(blank=True, null=True, default=2018)
 
     def refresh(self):
         if self.post_id != 0:
