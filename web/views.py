@@ -94,7 +94,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     pagination_class = CustomResultsSetPagination
 
     def get_queryset(self):
-        return Resource.objects.filter(created__gte=datetime(2016, 6, 1))
+        return Resource.objects.filter(created__gte=datetime(2017, 6, 1))
 
     def create(self, request, *args, **kwargs):
         # a hack, this should be moved into serializer

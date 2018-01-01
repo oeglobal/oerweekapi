@@ -4,11 +4,9 @@ import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 ALLOWED_HOSTS = ['api.openeducationweek.org']
-
 
 # Application definition
 
@@ -86,7 +84,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
@@ -101,29 +98,30 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ),
-
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 9
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+REST_USE_JWT = True
+
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
-    'JWT_LEEWAY': 60*5*60,
-    'JWT_VERIFY_EXPIRATION': False,
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    # 'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    # 'JWT_LEEWAY': 60 * 5 * 60,
+    # 'JWT_VERIFY_EXPIRATION': False,
+    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
 
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
 LOGIN_URL = '/api-auth/login/'
-OEW_YEAR = 2017
+OEW_YEAR = 2018
 
 from .localsettings import *
