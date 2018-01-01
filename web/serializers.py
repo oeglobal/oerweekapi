@@ -63,7 +63,7 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     institutionurl = serializers.CharField(source='institution_url', allow_blank=True)
     language = serializers.CharField(source='form_language')
     contributiontype = serializers.SerializerMethodField()
-    # localeventtype = serializers.CharField(source='event_type', allow_blank=True)
+    eventtype = serializers.CharField(source='event_type', allow_blank=True)
     # eventother = serializers.CharField(source='event_other_text', allow_blank=True)
     description = serializers.CharField(source='content')
     datetime = serializers.SerializerMethodField()
@@ -80,9 +80,9 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Resource
         fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
-                  'country', 'city', 'language', 'contributiontype',
-                  'title', 'description', 'datetime', 'directions', 'link',
-                  'license', 'post_status', 'image_url'
+                  'country', 'city', 'language', 'contributiontype', 'eventtype',
+                  'title', 'description', 'datetime', 'directions', 'link', 'linkwebroom',
+                  'opentags', 'license', 'post_status', 'image_url'
                   )
 
     def get_contributiontype(self, obj):
