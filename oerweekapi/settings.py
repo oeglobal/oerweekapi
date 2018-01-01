@@ -113,10 +113,10 @@ REST_USE_JWT = True
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    # 'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
-    # 'JWT_LEEWAY': 60 * 5 * 60,
-    # 'JWT_VERIFY_EXPIRATION': False,
-    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_LEEWAY': 60 * 5 * 60,
+    'JWT_VERIFY_EXPIRATION': False,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
 
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"

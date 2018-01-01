@@ -143,6 +143,8 @@ def import_submission(data):
     resource.email = data.get('email')
     resource.institution = data.get('institution') or ''
     resource.institution_url = data.get('institutionurl') or ''
+    if resource.institution_url and not resource.institution_url.startswith('http'):
+        resource.institution_url = 'http://' + resource.institution_url
 
     resource.country = data.get('country')
     resource.city = data.get('city')
@@ -151,7 +153,11 @@ def import_submission(data):
     resource.content = data.get('description')
     resource.form_language = data.get('language')
     resource.link = data.get('link') or ''
+    if resource.link and not resource.link.startswith('http'):
+        resource.link = 'http://' + resource.link
     resource.linkwebroom = data.get('linkwebroom') or ''
+    if resource.linkwebroom and not resource.linkwebroom.startswith('http'):
+        resource.linkwebroom = 'http://' + resource.linkwebroom
     resource.opentags = data.get('opentags') or []
 
     if data.get('license'):
