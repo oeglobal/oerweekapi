@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import OpenPhoto, Page, Resource, Category
+from .models import OpenPhoto, Page, Resource, Category, EmailTemplate
 
 
 class ResourceAdmin(admin.ModelAdmin):
@@ -24,7 +24,12 @@ class CategoryAdmin(admin.ModelAdmin):
     pass
 
 
+class EmailTemplateAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Resource, ResourceAdmin)
 admin.site.register(OpenPhoto, OpenPhotoAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Category, CategoryAdmin)
+admin.site.register(EmailTemplate, EmailTemplateAdmin)

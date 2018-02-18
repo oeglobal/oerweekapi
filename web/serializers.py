@@ -2,7 +2,7 @@ from django.template.defaultfilters import truncatewords_html
 from rest_framework import serializers
 import arrow
 
-from .models import OpenPhoto, Page, Resource
+from .models import OpenPhoto, Page, Resource, EmailTemplate
 
 
 class OpenPhotoSerializer(serializers.HyperlinkedModelSerializer):
@@ -82,7 +82,7 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
                   'country', 'city', 'language', 'contributiontype', 'eventtype',
                   'title', 'description', 'datetime', 'directions', 'link', 'linkwebroom',
-                  'opentags', 'license', 'post_status', 'image_url'
+                  'opentags', 'license', 'post_status', 'image_url', 'slug'
                   )
 
     def get_contributiontype(self, obj):
@@ -97,3 +97,9 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     def get_datetime(self, obj):
         if obj.event_time:
             return arrow.get(obj.event_time).isoformat()
+
+
+class EmailTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailTemplate
+        fields = ('id', 'name', 'subject', 'body')

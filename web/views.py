@@ -22,9 +22,10 @@ from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_resource, import_openphoto, import_submission
 from .utils import send_submission_email
-from .models import OpenPhoto, Page, Resource
+from .models import OpenPhoto, Page, Resource, EmailTemplate
 from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
-                          PageSerializer, ResourceSerializer, SubmissionResourceSerializer)
+                          PageSerializer, ResourceSerializer, SubmissionResourceSerializer,
+                          EmailTemplateSerializer)
 
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -40,7 +41,7 @@ class CustomResultsSetPagination(PageNumberPagination):
 
 
 class OpenPhotoViewSet(viewsets.ModelViewSet):
-    queryset = OpenPhoto.objects.filter(post_status='publish',).order_by('?')
+    queryset = OpenPhoto.objects.filter(post_status='publish', ).order_by('?')
     pagination_class = LargeResultsSetPagination
 
     def get_serializer_class(self):
@@ -124,9 +125,9 @@ class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         self.queryset = Resource.objects.filter(
-                        post_status='publish',
-                        post_type__in=['resource', 'project']
-                    )
+            post_status='publish',
+            post_type__in=['resource', 'project']
+        )
         super().get_queryset()
 
         return self.queryset
@@ -138,20 +139,20 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 
     def get_queryset(self):
         self.queryset = Resource.objects.filter(
-                        post_status='publish',
-                        post_type__in=['event']
-                    )
+            post_status='publish',
+            post_type__in=['event']
+        )
         super().get_queryset()
 
         if self.request.GET.get('event_type') == 'local':
             self.queryset = self.queryset \
-                                .filter(modified__year=2017) \
-                                .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
+                .filter(modified__year=2017) \
+                .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
 
         if self.request.GET.get('event_type') == 'online':
             self.queryset = self.queryset \
-                                .filter(modified__year=2017,
-                                        event_type__in=('webinar', 'online'))
+                .filter(modified__year=2017,
+                        event_type__in=('webinar', 'online'))
 
         if self.request.GET.get('date'):
             date = arrow.get(self.request.GET.get('date'))
@@ -167,11 +168,11 @@ class EventSummaryView(APIView):
         summary = {}
 
         country_events = Resource.objects \
-                            .filter(post_type='event',
-                                    modified__year=2017) \
-                            .exclude(country='',
-                                     event_type__in=('webinar', '')) \
-                            .order_by('country')
+            .filter(post_type='event',
+                    modified__year=2017) \
+            .exclude(country='',
+                     event_type__in=('webinar', '')) \
+            .order_by('country')
 
         country_groups = []
 
@@ -269,7 +270,8 @@ class TwitterSearchResults(APIView):
                                   access_token_key=settings.TWITTER_ACCESS_TOKEN_KEY,
                                   access_token_secret=settings.TWITTER_ACCESS_TOKEN_SECRET)
 
-        api_results = twitter_api.GetSearch(raw_query="q=%23openeducationwk%2C%20OR%20%23oeglobal&result_type=mixed&count=100")
+        api_results = twitter_api.GetSearch(
+            raw_query="q=%23openeducationwk%2C%20OR%20%23oeglobal&result_type=mixed&count=100")
 
         results = []
         for res in api_results:
@@ -279,5 +281,11 @@ class TwitterSearchResults(APIView):
                                 })
         results = results[:4]
 
-        cache.set('twitter', results, 60*5)
+        cache.set('twitter', results, 60 * 5)
         return Response(results)
+
+
+class EmailTemplateView(viewsets.ReadOnlyModelViewSet):
+    model = EmailTemplate
+    serializer_class = EmailTemplateSerializer
+    queryset = EmailTemplate.objects.all()

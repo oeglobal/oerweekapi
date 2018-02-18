@@ -218,3 +218,13 @@ class Resource(TimeStampedModel, ReviewModel):
             else:
                 print('Status code {}'.format(response.status_code))
                 raise NotImplementedError
+
+
+class EmailTemplate(models.Model):
+    name = models.CharField(max_length=128)
+    subject = models.CharField(max_length=255)
+    body = models.TextField(help_text='You can use the following variables in body and title: ' +
+                                      '{{title}}, {{name}}, {{link}}. HTML is not allowed.')
+
+    def __str__(self):
+        return self.name
