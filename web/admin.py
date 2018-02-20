@@ -4,7 +4,7 @@ from .models import OpenPhoto, Page, Resource, Category, EmailTemplate
 
 
 class ResourceAdmin(admin.ModelAdmin):
-    list_display = ('post_id', 'title', 'post_status', 'country', 'event_type', 'contact', 'institution')
+    list_display = ('id', 'title', 'post_status', 'event_type', 'contact', 'institution', 'year')
     readonly_fields = ('created', 'modified',)
     search_fields = ('post_id', 'title', 'country', 'contact', 'firstname', 'lastname', 'email', 'institution', 'link')
     list_filter = ('post_status', 'post_type', 'event_type', 'notified')

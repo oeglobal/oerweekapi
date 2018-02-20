@@ -5,8 +5,8 @@ from rest_framework import routers
 import rest_framework_jwt.views
 
 from web.views import (OpenPhotoViewSet, PageViewSet, WordpressCallback,
-    ResourceViewSet, EventViewSet, EventSummaryView, ExportResources,
-    SubmissionViewSet, TwitterSearchResults, EmailTemplateView)
+                       ResourceViewSet, EventViewSet, EventSummaryView, ExportResources,
+                       SubmissionViewSet, TwitterSearchResults, EmailTemplateView)
 
 router = routers.DefaultRouter()
 router.register(r'openphotos', OpenPhotoViewSet)

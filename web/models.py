@@ -146,7 +146,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
     categories = models.ManyToManyField(Category, blank=True)
     tags = TaggableManager(blank=True)
-    opentags = ArrayField(models.CharField(max_length=255, blank=True))
+    opentags = ArrayField(models.CharField(max_length=255, blank=True,), blank=True)
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
@@ -154,7 +154,7 @@ class Resource(TimeStampedModel, ReviewModel):
     screenshot_status = models.CharField(blank=True, default='', max_length=64)
     image = models.ImageField(upload_to='images/', blank=True)
 
-    year = models.IntegerField(blank=True, null=True, default=2018)
+    year = models.IntegerField(blank=True, null=True, default=settings.OEW_YEAR)
 
     def refresh(self):
         if self.post_id != 0:
@@ -199,7 +199,8 @@ class Resource(TimeStampedModel, ReviewModel):
         if self.image:
             self.screenshot_status = 'DONE'
             return self.save()
-
+        print(self.link)
+        
         if self.link and self.screenshot_status in ['', 'PENDING']:
             api_url = webshrinker_v2(settings.WEBSHRINKER_KEY, settings.WEBSHRINKEY_SECRET, self.link,
                                      {'size': '3xlarge'})
