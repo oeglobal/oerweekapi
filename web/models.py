@@ -200,7 +200,7 @@ class Resource(TimeStampedModel, ReviewModel):
             self.screenshot_status = 'DONE'
             return self.save()
         print(self.link)
-        
+
         if self.link and self.screenshot_status in ['', 'PENDING']:
             api_url = webshrinker_v2(settings.WEBSHRINKER_KEY, settings.WEBSHRINKEY_SECRET, self.link,
                                      {'size': '3xlarge'})
