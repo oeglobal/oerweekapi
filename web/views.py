@@ -167,7 +167,7 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
                                                  event_time__month=date.month,
                                                  event_time__day=date.day)
 
-        return self.queryset
+        return self.queryset.order_by('event_time')
 
 
 class EventSummaryView(APIView):
