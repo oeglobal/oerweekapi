@@ -224,6 +224,7 @@ class ExportResources(LoginRequiredMixin, View):
             (u"Date and Time", 8000),
             (u"Country", 8000),
             (u"City", 8000),
+            (u"Language", 8000),
         ]
 
         for col_num in range(len(columns)):
@@ -254,6 +255,7 @@ class ExportResources(LoginRequiredMixin, View):
                 event_time,
                 resource.country,
                 resource.city,
+                resource.form_language
             ]
 
             for col_num in range(len(row)):
