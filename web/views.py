@@ -162,10 +162,15 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
                         event_type__in=('webinar', 'online', 'other_online'))
 
         if self.request.GET.get('date'):
-            date = arrow.get(self.request.GET.get('date'))
-            self.queryset = self.queryset.filter(event_time__year=date.year,
-                                                 event_time__month=date.month,
-                                                 event_time__day=date.day)
+            if self.request.GET.get('date') == 'other':
+                self.queryset = self.queryset\
+                    .filter(event_time__month=3)\
+                    .exclude(event_time__range=['2018-03-05', '2018-03-09'])
+            else:
+                date = arrow.get(self.request.GET.get('date'))
+                self.queryset = self.queryset.filter(event_time__year=date.year,
+                                                     event_time__month=date.month,
+                                                     event_time__day=date.day)
 
         return self.queryset.order_by('event_time')
 
