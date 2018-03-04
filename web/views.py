@@ -145,7 +145,7 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
         super().get_queryset()
 
         if self.request.GET.get('special') == 'current':
-            current_time = arrow.get('2018-03-06 11:10').shift(minutes=30)
+            current_time = arrow.now().shift(hours=-1)
             self.queryset = Resource.objects.filter(event_type='online',
                                                     event_time__gte=current_time.datetime,
                                                     post_status='publish').order_by('event_time')[:8]
