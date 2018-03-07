@@ -155,6 +155,7 @@ class Resource(TimeStampedModel, ReviewModel):
     image = models.ImageField(upload_to='images/', blank=True)
 
     year = models.IntegerField(blank=True, null=True, default=settings.OEW_YEAR)
+    oeaward = models.BooleanField(default=False)
 
     def refresh(self):
         if self.post_id != 0:
