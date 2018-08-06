@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^api/events-summary/', EventSummaryView.as_view()),
     url(r'^api/twitter/', TwitterSearchResults.as_view()),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api-token-auth/', rest_framework_jwt.views.obtain_jwt_token),
     url(r'^api-token-refresh/', rest_framework_jwt.views.refresh_jwt_token),
