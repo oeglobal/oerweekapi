@@ -8,11 +8,11 @@ from web.views import (OpenPhotoViewSet, PageViewSet, WordpressCallback,
                        ResourceViewSet, EventViewSet, EventSummaryView, ExportResources,
                        SubmissionViewSet, TwitterSearchResults, EmailTemplateView)
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'openphotos', OpenPhotoViewSet)
 router.register(r'pages', PageViewSet, base_name='Page')
-router.register(r'resources', ResourceViewSet, base_name='Resource')
-router.register(r'events', EventViewSet, base_name='Event')
+router.register(r'resource', ResourceViewSet, base_name='Resource')
+router.register(r'event', EventViewSet, base_name='Event')
 router.register(r'submission', SubmissionViewSet, base_name='Submission')
 router.register(r'email-templates', EmailTemplateView)
 
