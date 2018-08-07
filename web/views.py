@@ -31,12 +31,14 @@ class LargeResultsSetPagination(PageNumberPagination):
     page_size = 1000
     page_size_query_param = 'page_size'
     max_page_size = 10000
+    page_query_param = "page['number']"
 
 
 class CustomResultsSetPagination(PageNumberPagination):
     page_size = 9
     page_size_query_param = 'page_size'
     max_page_size = 1000
+    page_query_param = "page['number']"
 
 
 class PageViewSet(viewsets.ModelViewSet):
@@ -85,71 +87,68 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
 
 class ResourceEventMixin(generics.GenericAPIView):
-    def get_queryset(self):
+    def get_queryset(self, queryset):
         if self.request.GET.get('slug'):
-            self.queryset = self.queryset.filter(slug=self.request.GET.get('slug'))
+            queryset = queryset.filter(slug=self.request.GET.get('slug'))
 
         if self.request.GET.get('year'):
-            year = self.request.GET.get('year', '2017')
-            self.queryset = self.queryset.filter(year=year)
+            year = self.request.GET.get('year', '2018')
+            queryset = queryset.filter(year=year)
 
-        return self.queryset
+        return queryset
 
 
 class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
 
     def get_queryset(self):
-        self.queryset = Resource.objects.filter(
+        queryset = Resource.objects.filter(
             post_status='publish',
             post_type__in=['resource', 'project']
         )
-        super().get_queryset()
-
-        return self.queryset
+        return super().get_queryset(queryset)
 
 
 class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
-    pagination_class = CustomResultsSetPagination
     resource_name = 'Event'
 
     def get_queryset(self):
-        self.queryset = Resource.objects.filter(
+        queryset = Resource.objects.filter(
             post_status='publish',
             post_type__in=['event']
         )
-        super().get_queryset()
+        queryset = super().get_queryset(queryset)
 
         if self.request.GET.get('special') == 'current':
             current_time = arrow.now().shift(hours=-1)
-            self.queryset = Resource.objects.filter(event_type='online',
-                                                    event_time__gte=current_time.datetime,
-                                                    post_status='publish').order_by('event_time')[:8]
+            queryset = Resource.objects.filter(event_type='online',
+                                               event_time__gte=current_time.datetime,
+                                               post_status='publish').order_by('event_time')[:8]
             return self.queryset
 
         if self.request.GET.get('event_type') == 'local':
-            self.queryset = self.queryset \
+            queryset = self.queryset \
                 .filter(year=2018) \
                 .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
 
         if self.request.GET.get('event_type') == 'online':
-            self.queryset = self.queryset \
+            queryset = self.queryset \
                 .filter(year=2018,
                         event_type__in=('webinar', 'online', 'other_online'))
 
         if self.request.GET.get('date'):
             if self.request.GET.get('date') == 'other':
-                self.queryset = self.queryset\
-                    .filter(event_time__month=3)\
+                queryset = self.queryset \
+                    .filter(event_time__month=3) \
                     .exclude(event_time__range=['2018-03-05 00:00:00', '2018-03-09 23:59:59'])
             else:
                 date = arrow.get(self.request.GET.get('date'))
-                self.queryset = self.queryset.filter(event_time__year=date.year,
-                                                     event_time__month=date.month,
-                                                     event_time__day=date.day)
+                queryset = self.queryset.filter(event_time__year=date.year,
+                                                event_time__month=date.month,
+                                                event_time__day=date.day)
 
-        return self.queryset.order_by('event_time')
+        return queryset.order_by('event_time')
 
 
 class EventSummaryView(APIView):
