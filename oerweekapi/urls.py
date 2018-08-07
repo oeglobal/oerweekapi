@@ -4,12 +4,11 @@ from django.contrib import admin
 from rest_framework import routers
 import rest_framework_jwt.views
 
-from web.views import (OpenPhotoViewSet, PageViewSet, WordpressCallback,
-                       ResourceViewSet, EventViewSet, EventSummaryView, ExportResources,
+from web.views import (PageViewSet, WordpressCallback, ResourceViewSet,
+                       EventViewSet, EventSummaryView, ExportResources,
                        SubmissionViewSet, TwitterSearchResults, EmailTemplateView)
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'openphotos', OpenPhotoViewSet)
 router.register(r'pages', PageViewSet, base_name='Page')
 router.register(r'resource', ResourceViewSet, base_name='Resource')
 router.register(r'event', EventViewSet, base_name='Event')

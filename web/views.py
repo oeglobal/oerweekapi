@@ -20,11 +20,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .importer import import_resource, import_openphoto, import_submission
+from .importer import import_resourceimport_submission
 from .utils import send_submission_email
-from .models import OpenPhoto, Page, Resource, EmailTemplate
-from .serializers import (OpenPhotoSerializer, AuthenticatedOpenPhotoSerializer,
-                          PageSerializer, ResourceSerializer, SubmissionResourceSerializer,
+from .models import Page, Resource, EmailTemplate
+from .serializers import (PageSerializer, ResourceSerializer, SubmissionResourceSerializer,
                           EmailTemplateSerializer)
 
 
@@ -40,17 +39,6 @@ class CustomResultsSetPagination(PageNumberPagination):
     max_page_size = 1000
 
 
-class OpenPhotoViewSet(viewsets.ModelViewSet):
-    queryset = OpenPhoto.objects.filter(post_status='publish', ).order_by('?')
-    pagination_class = LargeResultsSetPagination
-
-    def get_serializer_class(self):
-        if self.request.method in ['PUT', 'POST'] and self.request.user.is_authenticated():
-            return AuthenticatedOpenPhotoSerializer
-
-        return OpenPhotoSerializer
-
-
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
 
@@ -60,19 +48,6 @@ class PageViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(slug=self.request.GET.get('slug'))
 
         return queryset
-
-
-class WordpressCallback(APIView):
-    def get(self, request):
-        post_type = request.GET.get('post_type')
-        if post_type:
-            if post_type == 'openphoto':
-                import_openphoto(post_id=request.GET.get('post_id'))
-            else:
-                import_resource(post_type=request.GET.get('post_type'),
-                                post_id=request.GET.get('post_id'))
-
-        return Response('OK')
 
 
 class SubmissionPermission(permissions.BasePermission):
