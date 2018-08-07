@@ -93,6 +93,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = (SubmissionPermission,)
     serializer_class = SubmissionResourceSerializer
     pagination_class = CustomResultsSetPagination
+    resource_name = 'Submission'
 
     def get_queryset(self):
         return Resource.objects.filter(created__gte=datetime(2017, 6, 1)).order_by('-created')
@@ -136,6 +137,7 @@ class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
     pagination_class = CustomResultsSetPagination
+    resource_name = 'Event'
 
     def get_queryset(self):
         self.queryset = Resource.objects.filter(
