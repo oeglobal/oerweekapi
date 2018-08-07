@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .importer import import_resourceimport_submission
+from .importer import import_resource, import_submission
 from .utils import send_submission_email
 from .models import Page, Resource, EmailTemplate
 from .serializers import (PageSerializer, ResourceSerializer, SubmissionResourceSerializer,
@@ -58,7 +58,7 @@ class SubmissionPermission(permissions.BasePermission):
         if request.method == 'POST' or request.method == 'OPTIONS':
             return True
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             return True
 
         return False
@@ -71,7 +71,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     resource_name = 'Submission'
 
     def get_queryset(self):
-        return Resource.objects.filter(created__gte=datetime(2017, 6, 1)).order_by('-created')
+        return Resource.objects.filter(created__gte=arrow.get('2017-06-01').datetime).order_by('-created')
 
     def create(self, request, *args, **kwargs):
         # a hack, this should be moved into serializer
@@ -279,4 +279,4 @@ class TwitterSearchResults(APIView):
 class EmailTemplateView(viewsets.ReadOnlyModelViewSet):
     model = EmailTemplate
     serializer_class = EmailTemplateSerializer
-    queryset = EmailTemplate.objects.all()
+    queryset = EmailTemplate.objects.all().order_by('id')

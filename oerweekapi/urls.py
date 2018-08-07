@@ -4,8 +4,8 @@ from django.contrib import admin
 from rest_framework import routers
 import rest_framework_jwt.views
 
-from web.views import (PageViewSet, WordpressCallback, ResourceViewSet,
-                       EventViewSet, EventSummaryView, ExportResources,
+from web.views import (PageViewSet, ResourceViewSet,EventViewSet,
+                       EventSummaryView, ExportResources,
                        SubmissionViewSet, TwitterSearchResults, EmailTemplateView)
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -18,7 +18,6 @@ router.register(r'email-templates', EmailTemplateView)
 urlpatterns = [
     url(r'^api/', include(router.urls)),
     # url(r'^api/submission/', SubmissionView.as_view()),
-    url(r'^api/wp-callback/', WordpressCallback.as_view()),
     url(r'^api/events-summary/', EventSummaryView.as_view()),
     url(r'^api/twitter/', TwitterSearchResults.as_view()),
 
