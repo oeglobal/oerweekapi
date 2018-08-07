@@ -125,26 +125,26 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
             queryset = Resource.objects.filter(event_type='online',
                                                event_time__gte=current_time.datetime,
                                                post_status='publish').order_by('event_time')[:8]
-            return self.queryset
+            return queryset
 
         if self.request.GET.get('event_type') == 'local':
-            queryset = self.queryset \
+            queryset = queryset \
                 .filter(year=2018) \
                 .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
 
         if self.request.GET.get('event_type') == 'online':
-            queryset = self.queryset \
+            queryset = queryset \
                 .filter(year=2018,
                         event_type__in=('webinar', 'online', 'other_online'))
 
         if self.request.GET.get('date'):
             if self.request.GET.get('date') == 'other':
-                queryset = self.queryset \
+                queryset = queryset \
                     .filter(event_time__month=3) \
                     .exclude(event_time__range=['2018-03-05 00:00:00', '2018-03-09 23:59:59'])
             else:
                 date = arrow.get(self.request.GET.get('date'))
-                queryset = self.queryset.filter(event_time__year=date.year,
+                queryset = queryset.filter(event_time__year=date.year,
                                                 event_time__month=date.month,
                                                 event_time__day=date.day)
 
