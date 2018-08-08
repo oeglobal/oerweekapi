@@ -20,7 +20,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .importer import import_resource, import_submission
+from .importer import import_submission
 from .utils import send_submission_email
 from .models import Page, Resource, EmailTemplate
 from .serializers import (PageSerializer, ResourceSerializer, SubmissionResourceSerializer,

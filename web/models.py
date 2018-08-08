@@ -128,11 +128,6 @@ class Resource(TimeStampedModel, ReviewModel):
     year = models.IntegerField(blank=True, null=True, default=settings.OEW_YEAR)
     oeaward = models.BooleanField(default=False)
 
-    def refresh(self):
-        if self.post_id != 0:
-            from .importer import import_resource
-            import_resource(post_type=self.post_type, post_id=self.post_id)
-
     def get_full_url(self):
         if self.post_type == 'event':
             return "http://www.openeducationweek.org/events/{}".format(self.slug)
