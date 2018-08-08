@@ -7,3 +7,5 @@ DATABASES = {
         'HOST': '127.0.0.1',
     }
 }
+
+SECRET_KEY = '123'
