@@ -16,7 +16,6 @@ django-wysiwyg==0.7.1
 djangorestframework==3.8.2
 djangorestframework-jsonapi==2.5.0
 djangorestframework-jwt==1.11.0
-drf-json-api==0.1.1
 future==0.15.2
 gnureadline==6.3.3
 gunicorn==19.4.5
