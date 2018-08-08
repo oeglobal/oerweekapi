@@ -27,4 +27,6 @@ jobs:
             - "venv"
       - run:
           command: |
-            true
+            . venv/bin/activate
+            cd ~/oerweekapi
+            py.test
