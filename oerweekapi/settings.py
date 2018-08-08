@@ -139,4 +139,8 @@ DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 LOGIN_URL = '/api-auth/login/'
 OEW_YEAR = 2018
 
-from .localsettings import *
+CI = os.environ.get('CI')
+if CI:
+    from .testsettings import *
+else:
+    from .localsettings import *
