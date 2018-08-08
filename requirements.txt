@@ -45,7 +45,7 @@ pytest-django==2.9.1
 python-dateutil==2.6.1
 python-oembed==0.2.4
 python-twitter==3.1
-raven==5.10.2
+raven==6.9.0
 requests==2.9.1
 requests-oauthlib==0.6.0
 simplegeneric==0.8.1
