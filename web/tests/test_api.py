@@ -17,7 +17,7 @@ def test_submission_event_online(rf, client, db, normal_user):
             'attributes': {'email': 'mike.jones@example.com',
                            'language': 'German',
                            'post_type': 'event',
-                           'eventtype': 'online',
+                           'event_type': 'online',
                            'is_community': True,
                            'institution': 'OEC',
                            'institutionurl': 'http://www.oeconsortium.org',
@@ -29,7 +29,6 @@ def test_submission_event_online(rf, client, db, normal_user):
                            'lastname': 'Jones',
                            'is_primary': False,
                            'firstname': 'Mike',
-                           'license': 'CC-BY',
                            'datetime': '2018-03-27T19:00:00+02:00',
                            'is_higher': True,
                            'title': 'Webinar about OER',
@@ -49,57 +48,54 @@ def test_submission_event_online(rf, client, db, normal_user):
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('data').get('attributes').get('title')
     assert resource.content == data.get('data').get('attributes').get('description')
+    assert resource.post_type == 'event'
     assert resource.event_type == 'online'
     assert resource.event_online is True
     assert resource.post_status == 'draft'
 
     # check that validator adds http:// on www only submissions
     assert resource.link == 'http://www.oeconsortium.org/events/online/20'
+    assert resource.opentags == data.get('data').get('attributes').get('opentags')
 
 
 @pytest.mark.client
 @pytest.mark.django_db
 def test_submission_event_local(rf, client, db, normal_user):
     data = {
-        'post_type': 'event',
-        'eventtype': 'local',
-
-        'firstname': 'Mike',
-        'lastname': 'Jones',
-        'email': 'mike@example.com',
-
-        'institution': 'OEC',
-        'institutionurl': 'http://www.oeconsortium.org',
-        'country': 'United States',
-        'city': 'Baltimore',
-
-        'link': 'http://www.oeconsoritum.org/event/14',
-
-        'event_time': '2018-04-12T15:30:00+02:00',
-        'directions': 'Main Street 5, Baltimore',
-
-        'title': 'Creative Destruction:  An ‘Open Textbook’ disrupting personal and institutional praxis',
-        'archive': True,
-
-        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit,'
-                       'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim'
-                       'veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo '
-                       'consequat.Duis aute irure dolor in reprehenderit in voluptate velit esse cillum'
-                       'dolore eu fugiat nulla pariatur.Excepteur sint occaecat cupidatat non proident',
-        'language': 'English',
-        'is_primary': False,
-        'is_higher': True,
-        'is_community': True,
-        'opentags': ['Open Research', 'Open Policy']
+        "firstname": "Ingrid",
+        "lastname": "Rivers",
+        "institution": "Good and Watson Associates",
+        "institutionurl": "http://www.gof.com.au",
+        "email": "jeper@mailinator.com",
+        "country": "Antigua and Barbuda",
+        "city": "Gregory Love",
+        "language": "Armenian",
+        "post_type": "event",
+        "event_type": "local",
+        "title": "Jakeem Owens",
+        "description": "Et culpa sint hic enim omnis velit qui architecto autem atque rerum quis",
+        "event_time": "2018-03-11T09:00:00.000Z",
+        "event_facilitator": "Octavia Wagner",
+        "directions": None,
+        "link": "http://www.nonomitakiwu.com",
+        "linkwebroom": "http://www.pom.cc",
+        "opentags": [
+            "Open Licenses"
+        ],
+        "license": None,
+        "post_status": "draft",
+        "image_url": None,
+        "slug": None
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
+    client.post('/api/submission', content_type='application/json', data=json.dumps(data))
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
     assert resource.event_type == 'local'
     assert resource.event_time == arrow.get(data.get('event_time')).datetime
+    assert  resource.event_facilitator == data.get('event_facilitator')
 
 
 @pytest.mark.client
@@ -182,49 +178,13 @@ def test_submission_project(rf, client, db, normal_user):
 
 @pytest.mark.client
 @pytest.mark.django_db
-def test_submission_online_event_other(rf, client, db, normal_user):
-    data = {
-        'license': None,
-        'institution': '',
-        'archive': True,
-        'post_type': 'event',
-        'eventtype': 'online',
-        'city': 'London',
-        'directions': None,
-        'is_primary': False,
-        'is_higher': True,
-        'language': 'English',
-        'lastname': 'Jones',
-        'country': 'United Kingdom',
-        'email': 'mike2@example.com',
-        'firstname': 'Mike',
-        'title': 'Twitter Chat',
-        'datetime': '2018-03-27T00:00:00+02:00',
-        'link': '',
-        'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod'
-                       '\ntempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam',
-        'is_community': False,
-        'institutionurl': '',
-        'opentags': ['Open Research', 'Open Policy']
-    }
-
-    client.login(username='user', password='password')
-    response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
-    assert data.get('title') in str(response.content), 'OER Resource Submission failed'
-
-    resource = Resource.objects.latest('id')
-    assert resource.title == data.get('title')
-
-
-@pytest.mark.client
-@pytest.mark.django_db
 def test_submission_email(rf, client, db, normal_user):
     data = {
         'license': 'other',
         'institution': '',
         'archive': True,
         'post_type': 'event',
-        'eventtype': 'local',
+        'event_type': 'local',
         'city': 'London',
         'directions': None,
         'is_primary': False,

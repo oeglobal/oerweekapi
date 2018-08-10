@@ -36,7 +36,7 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     institutionurl = serializers.CharField(source='institution_url', allow_blank=True)
     language = serializers.CharField(source='form_language')
-    eventtype = serializers.CharField(source='event_type', allow_blank=True, allow_null=True, required=False)
+    event_type = serializers.CharField(allow_null=True, required=False)
     description = serializers.CharField(source='content')
 
     directions = serializers.CharField(source='event_directions', allow_blank=True, allow_null=True)
@@ -51,7 +51,7 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
         model = Resource
         fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
                   'country', 'city', 'language',
-                  'eventtype', 'event_time',
+                  'event_type', 'event_time', 'event_facilitator',
                   'title', 'description', 'event_time', 'directions', 'link', 'linkwebroom',
                   'opentags', 'license', 'post_status', 'image_url', 'slug', 'post_type'
                   )
@@ -86,8 +86,6 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
 
         if data.get('post_type') == 'event' and data.get('event_type') == 'online':
             data['event_online'] = True
-        else:
-            data['event_type'] = ''
 
         if not data.get('license'):
             data['license'] = ''
