@@ -36,7 +36,6 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     institutionurl = serializers.CharField(source='institution_url', allow_blank=True)
     language = serializers.CharField(source='form_language')
-    contributiontype = serializers.SerializerMethodField(read_only=True)
     eventtype = serializers.CharField(source='event_type', allow_blank=True, allow_null=True, required=False)
     description = serializers.CharField(source='content')
 
@@ -45,23 +44,15 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     post_status = serializers.CharField(read_only=True)
 
     license = serializers.CharField(allow_blank=True, allow_null=True, required=False)
+    slug = serializers.CharField(allow_null=True, required=False)
 
     class Meta:
         model = Resource
         fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
-                  'country', 'city', 'language', 'contributiontype', 'eventtype',
+                  'country', 'city', 'language', 'eventtype',
                   'title', 'description', 'event_time', 'directions', 'link', 'linkwebroom',
                   'opentags', 'license', 'post_status', 'image_url', 'slug', 'post_type'
                   )
-
-    def get_contributiontype(self, obj):
-        if obj.post_type == 'event' and obj.event_online:
-            return 'event_online'
-
-        if obj.post_type == 'event' and not obj.event_online:
-            return 'event_local'
-
-        return obj.post_type
 
     def validate_institutionurl(self, value):
         if value and not value.startswith('http'):
