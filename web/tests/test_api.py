@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import pytest
 import json
+import arrow
+from pprint import pprint
 
 from django.core import mail
 
@@ -14,24 +16,26 @@ def test_submission_event_online(rf, client, db, normal_user):
         'data': {
             'attributes': {'email': 'mike.jones@example.com',
                            'language': 'German',
-                           'contributiontype': 'event',
+                           'post_type': 'event',
                            'eventtype': 'online',
                            'is_community': True,
                            'institution': 'OEC',
                            'institutionurl': 'http://www.oeconsortium.org',
                            'directions': None,
                            'archive': True,
-                           'link': 'http://oeconsortium.org/events/online/20',
+                           'link': 'www.oeconsortium.org/events/online/20',
                            'description': 'Description of Webinar about OER',
                            'country': 'United States',
                            'lastname': 'Jones',
                            'is_primary': False,
                            'firstname': 'Mike',
-                           'license': None,
+                           'license': 'CC-BY',
                            'datetime': '2018-03-27T19:00:00+02:00',
                            'is_higher': True,
                            'title': 'Webinar about OER',
                            'city': 'New York',
+                           'image_url': '',
+                           'opentags': ['Open Research', 'Open Policy']
                            },
             'type': 'submission'
         }
@@ -39,19 +43,25 @@ def test_submission_event_online(rf, client, db, normal_user):
 
     # client.login(username='user', password='password')
     response = client.post('/api/submission', content_type='application/vnd.api+json', data=json.dumps(data))
-    assert data.get('data').get('attributes').get('title') in str(response.content), 'Webinar about OER'
+    pprint(response.json())
+    assert data.get('data').get('attributes').get('title') in str(response.content), 'Submission failed'
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('data').get('attributes').get('title')
     assert resource.content == data.get('data').get('attributes').get('description')
     assert resource.event_type == 'online'
+    assert resource.event_online is True
+    assert resource.post_status == 'draft'
+
+    # check that validator adds http:// on www only submissions
+    assert resource.link == 'http://www.oeconsortium.org/events/online/20'
 
 
 @pytest.mark.client
 @pytest.mark.django_db
 def test_submission_event_local(rf, client, db, normal_user):
     data = {
-        'contributiontype': 'event',
+        'post_type': 'event',
         'eventtype': 'local',
 
         'firstname': 'Mike',
@@ -64,9 +74,8 @@ def test_submission_event_local(rf, client, db, normal_user):
         'city': 'Baltimore',
 
         'link': 'http://www.oeconsoritum.org/event/14',
-        'license': None,
 
-        'datetime': '2018-04-12T15:30:00+02:00',
+        'event_time': '2018-04-12T15:30:00+02:00',
         'directions': 'Main Street 5, Baltimore',
 
         'title': 'Creative Destruction:  An ‘Open Textbook’ disrupting personal and institutional praxis',
@@ -81,33 +90,33 @@ def test_submission_event_local(rf, client, db, normal_user):
         'is_primary': False,
         'is_higher': True,
         'is_community': True,
+        'opentags': ['Open Research', 'Open Policy']
     }
 
     client.login(username='user', password='password')
     response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
-    assert data.get('datetime') in str(response.content), 'Local Event Submission failed'
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
     assert resource.event_type == 'local'
+    assert resource.event_time == arrow.get(data.get('event_time')).datetime
 
 
 @pytest.mark.client
 @pytest.mark.django_db
 def test_submission_oer_resource(rf, client, db, normal_user):
     data = {
+        'post_type': 'resource',
         'city': 'Washington, DC',
         'is_primary': False,
         'firstname': 'Mike',
         'lastname': 'Smith',
         'title': 'Building for Scale: Updates to Google Maps APIs Standard Plan',
         'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
-        'localeventtype': None,
         'is_community': True,
         'country': 'United States',
         'archive': False,
         'institution': 'OEC',
-        'contributiontype': 'resource',
         'link': 'http://www.oeconsortium.org/web/resource/',
         'email': 'mike2@example.com',
         'is_higher': True,
@@ -115,11 +124,13 @@ def test_submission_oer_resource(rf, client, db, normal_user):
         'language': 'English',
         'datetime': '2018-03-27T00:00:00+02:00',
         'license': 'CC-BY-SA',
-        'directions': None
+        'directions': None,
+        'opentags': ['Open Research', 'Open Policy']
     }
 
     client.login(username='user', password='password')
     response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
+    print(response.content)
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -149,14 +160,15 @@ def test_submission_project(rf, client, db, normal_user):
         'datetime': '2018-03-27T00:00:00+02:00',
         'license': 'Freely accessible',
         'institution': 'OEC',
-        'localeventtype': None,
         'directions': None,
         'title': 'Engineers Create The First Dust-Sized Wireless Sensors That Can Be Implanted Into The Human Body',
         'firstname': 'Mike',
         'is_community': True,
         'is_primary': True,
         'email': 'mike3@example.com',
-        'contributiontype': 'project'
+        'contributiontype': 'project',
+        'opentags': ['Open Research', 'Open Policy'],
+        'post_type': 'resource'
     }
 
     client.login(username='user', password='password')
@@ -174,8 +186,8 @@ def test_submission_online_event_other(rf, client, db, normal_user):
         'license': None,
         'institution': '',
         'archive': True,
-        'contributiontype': 'event_online',
-        'localeventtype': 'other',
+        'post_type': 'event',
+        'eventtype': 'online',
         'city': 'London',
         'directions': None,
         'is_primary': False,
@@ -185,14 +197,14 @@ def test_submission_online_event_other(rf, client, db, normal_user):
         'country': 'United Kingdom',
         'email': 'mike2@example.com',
         'firstname': 'Mike',
-        'title': 'OER Resource Submission failed',
+        'title': 'Twitter Chat',
         'datetime': '2018-03-27T00:00:00+02:00',
-        'eventother': 'Twitter Chat',
         'link': '',
         'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod'
                        '\ntempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam',
         'is_community': False,
-        'institutionurl': ''
+        'institutionurl': '',
+        'opentags': ['Open Research', 'Open Policy']
     }
 
     client.login(username='user', password='password')
@@ -207,11 +219,11 @@ def test_submission_online_event_other(rf, client, db, normal_user):
 @pytest.mark.django_db
 def test_submission_email(rf, client, db, normal_user):
     data = {
-        'license': None,
+        'license': 'other',
         'institution': '',
         'archive': True,
-        'contributiontype': 'event_online',
-        'localeventtype': 'other',
+        'post_type': 'event',
+        'eventtype': 'local',
         'city': 'London',
         'directions': None,
         'is_primary': False,
@@ -221,13 +233,13 @@ def test_submission_email(rf, client, db, normal_user):
         'country': 'United Kingdom',
         'email': 'mike2@example.com',
         'firstname': 'Mike',
-        'title': 'OER Resource Submission failed',
+        'title': 'Building for Scale: Updates to Google Maps APIs Standard Plan',
         'datetime': '2018-03-27T00:00:00+02:00',
-        'eventother': 'Twitter Chat',
         'link': '',
         'description': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod',
         'is_community': False,
-        'institutionurl': ''
+        'institutionurl': '',
+        'opentags': ['Open Research', 'Open Policy']
     }
 
     client.login(username='user', password='password')

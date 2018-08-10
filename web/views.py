@@ -21,7 +21,6 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_submission
-from .utils import send_submission_email
 from .models import Page, Resource, EmailTemplate
 from .serializers import (PageSerializer, ResourceSerializer, SubmissionResourceSerializer,
                           EmailTemplateSerializer)
@@ -68,22 +67,27 @@ class SubmissionPermission(permissions.BasePermission):
 
 class SubmissionViewSet(viewsets.ModelViewSet):
     permission_classes = (SubmissionPermission,)
-    serializer_class = SubmissionResourceSerializer
     pagination_class = CustomResultsSetPagination
     resource_name = 'submission'
+
+    def get_serializer_class(self):
+        return SubmissionResourceSerializer
 
     def get_queryset(self):
         return Resource.objects.filter(created__gte=arrow.get('2017-06-01').datetime).order_by('-created')
 
-    def create(self, request, *args, **kwargs):
-        # a hack, this should be moved into serializer
-        resource = import_submission(data=request.data)
-        send_submission_email(resource)
+    # def create(self, request, *args, **kwargs):
+    #     data = request.data
+    #     data['post_status'] = 'draft'
 
-        data = request.data
-        data['id'] = resource.id
-
-        return Response(data, status=status.HTTP_201_CREATED)
+    #     # a hack, this should be moved into serializer
+    #     resource = import_submission(data=request.data)
+    #     send_submission_email(resource)
+    #
+    #     data = request.data
+    #     data['id'] = resource.id
+    #
+    #     return Response(data, status=status.HTTP_201_CREATED)
 
 
 class ResourceEventMixin(generics.GenericAPIView):
@@ -145,8 +149,8 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
             else:
                 date = arrow.get(self.request.GET.get('date'))
                 queryset = queryset.filter(event_time__year=date.year,
-                                                event_time__month=date.month,
-                                                event_time__day=date.day)
+                                           event_time__month=date.month,
+                                           event_time__day=date.day)
 
         return queryset.order_by('event_time')
 

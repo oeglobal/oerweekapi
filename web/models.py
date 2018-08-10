@@ -14,6 +14,8 @@ from taggit.managers import TaggableManager
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
+from mail_templated import send_mail
+
 
 class ReviewModel(models.Model):
     REVIEW_CHOICES = Choices(
@@ -75,7 +77,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
     post_type = models.CharField(choices=RESOURCE_TYPES, max_length=25)
     post_status = models.CharField(choices=POST_STATUS_TYPES, max_length=25)
-    post_id = models.IntegerField()
+    post_id = models.IntegerField(default=0)
     title = models.CharField(max_length=255)
     slug = models.CharField(max_length=255, blank=True)
     content = models.TextField(blank=True)
@@ -90,7 +92,7 @@ class Resource(TimeStampedModel, ReviewModel):
     institution = models.CharField(max_length=255, blank=True)
     institution_url = models.CharField(max_length=255, blank=True)
     form_language = models.CharField(max_length=255, blank=True)
-    license = models.CharField(max_length=255, blank=True)
+    license = models.CharField(max_length=255, blank=True, null=True)
     link = models.CharField(max_length=255, blank=True)
     linkwebroom = models.CharField(max_length=255, blank=True)
 
@@ -186,6 +188,11 @@ class Resource(TimeStampedModel, ReviewModel):
             else:
                 print('Status code {}'.format(response.status_code))
                 raise NotImplementedError
+
+    def send_new_submission_email(self):
+        send_mail('emails/submission_received.tpl', {},
+                  'info@openeducationweek.org', [self.email]
+                  )
 
 
 class EmailTemplate(models.Model):

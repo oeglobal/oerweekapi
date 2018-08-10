@@ -1,6 +1,8 @@
+from pprint import pprint
+import arrow
+
 from django.template.defaultfilters import truncatewords_html
 from rest_framework import serializers
-import arrow
 
 from .models import Page, Resource, EmailTemplate
 
@@ -34,27 +36,22 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     institutionurl = serializers.CharField(source='institution_url', allow_blank=True)
     language = serializers.CharField(source='form_language')
-    contributiontype = serializers.SerializerMethodField()
-    eventtype = serializers.CharField(source='event_type', allow_blank=True)
-    # eventother = serializers.CharField(source='event_other_text', allow_blank=True)
+    contributiontype = serializers.SerializerMethodField(read_only=True)
+    eventtype = serializers.CharField(source='event_type', allow_blank=True, allow_null=True, required=False)
     description = serializers.CharField(source='content')
-    datetime = serializers.SerializerMethodField()
 
     directions = serializers.CharField(source='event_directions', allow_blank=True, allow_null=True)
-    # archive = serializers.BooleanField(source='archive_planned')
+    image_url = serializers.CharField(source='get_image_url', read_only=True)
+    post_status = serializers.CharField(read_only=True)
 
-    # is_primary = serializers.SerializerMethodField()
-    # is_higher = serializers.SerializerMethodField()
-    # is_community = serializers.SerializerMethodField()
-
-    image_url = serializers.CharField(source='get_image_url', allow_blank=True, allow_null=True)
+    license = serializers.CharField(allow_blank=True, allow_null=True, required=False)
 
     class Meta:
         model = Resource
         fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
                   'country', 'city', 'language', 'contributiontype', 'eventtype',
-                  'title', 'description', 'datetime', 'directions', 'link', 'linkwebroom',
-                  'opentags', 'license', 'post_status', 'image_url', 'slug'
+                  'title', 'description', 'event_time', 'directions', 'link', 'linkwebroom',
+                  'opentags', 'license', 'post_status', 'image_url', 'slug', 'post_type'
                   )
 
     def get_contributiontype(self, obj):
@@ -66,9 +63,38 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
 
         return obj.post_type
 
-    def get_datetime(self, obj):
-        if obj.event_time:
-            return arrow.get(obj.event_time).isoformat()
+    def validate_institutionurl(self, value):
+        if value and not value.startswith('http'):
+            value = 'http://' + value
+
+        return value
+
+    def validate_link(self, value):
+        if value and not value.startswith('http'):
+            value = 'http://' + value
+
+        return value
+
+    def validate_linkwebroom(self, value):
+        if value and not value.startswith('http'):
+            value = 'http://' + value
+
+        return value
+
+    def create(self, validated_data):
+        data = validated_data
+        data['post_status'] = 'draft'
+
+        if data.get('post_type') == 'event' and data.get('event_type') == 'online':
+            data['event_online'] = True
+
+        if not data.get('license'):
+            data['license'] = ''
+
+        resource = Resource.objects.create(**data)
+        resource.send_new_submission_email()
+
+        return resource
 
 
 class EmailTemplateSerializer(serializers.ModelSerializer):
