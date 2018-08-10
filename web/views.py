@@ -22,7 +22,8 @@ from rest_framework.pagination import PageNumberPagination
 
 from .importer import import_submission
 from .models import Page, Resource, EmailTemplate
-from .serializers import (PageSerializer, ResourceSerializer, SubmissionResourceSerializer,
+from .serializers import (PageSerializer, ResourceSerializer,
+                          SubmissionResourceSerializer, AdminSubmissionResourceSerializer,
                           EmailTemplateSerializer)
 
 
@@ -71,23 +72,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     resource_name = 'submission'
 
     def get_serializer_class(self):
+        if self.request.user.is_superuser:
+            return AdminSubmissionResourceSerializer
+
         return SubmissionResourceSerializer
 
     def get_queryset(self):
         return Resource.objects.filter(created__gte=arrow.get('2017-06-01').datetime).order_by('-created')
-
-    # def create(self, request, *args, **kwargs):
-    #     data = request.data
-    #     data['post_status'] = 'draft'
-
-    #     # a hack, this should be moved into serializer
-    #     resource = import_submission(data=request.data)
-    #     send_submission_email(resource)
-    #
-    #     data = request.data
-    #     data['id'] = resource.id
-    #
-    #     return Response(data, status=status.HTTP_201_CREATED)
 
 
 class ResourceEventMixin(generics.GenericAPIView):

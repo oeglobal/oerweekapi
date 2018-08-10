@@ -41,15 +41,17 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
 
     directions = serializers.CharField(source='event_directions', allow_blank=True, allow_null=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
-    post_status = serializers.CharField(read_only=True)
+    post_status = serializers.CharField(read_only=True, required=False)
 
     license = serializers.CharField(allow_blank=True, allow_null=True, required=False)
     slug = serializers.CharField(allow_null=True, required=False)
+    linkwebroom = serializers.CharField(allow_blank=True)
 
     class Meta:
         model = Resource
         fields = ('id', 'firstname', 'lastname', 'institution', 'institutionurl', 'email',
-                  'country', 'city', 'language', 'eventtype',
+                  'country', 'city', 'language',
+                  'eventtype', 'event_time',
                   'title', 'description', 'event_time', 'directions', 'link', 'linkwebroom',
                   'opentags', 'license', 'post_status', 'image_url', 'slug', 'post_type'
                   )
@@ -72,12 +74,20 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
 
         return value
 
+    def to_internal_value(self, data):
+        if data.get('linkwebroom') is None:
+            data['linkwebroom'] = ''
+
+        return super().to_internal_value(data)
+
     def create(self, validated_data):
         data = validated_data
         data['post_status'] = 'draft'
 
         if data.get('post_type') == 'event' and data.get('event_type') == 'online':
             data['event_online'] = True
+        else:
+            data['event_type'] = ''
 
         if not data.get('license'):
             data['license'] = ''
@@ -86,6 +96,10 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
         resource.send_new_submission_email()
 
         return resource
+
+
+class AdminSubmissionResourceSerializer(SubmissionResourceSerializer):
+    post_status = serializers.CharField(read_only=False)
 
 
 class EmailTemplateSerializer(serializers.ModelSerializer):

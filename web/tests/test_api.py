@@ -125,6 +125,7 @@ def test_submission_oer_resource(rf, client, db, normal_user):
         'datetime': '2018-03-27T00:00:00+02:00',
         'license': 'CC-BY-SA',
         'directions': None,
+        'linkwebroom': None,
         'opentags': ['Open Research', 'Open Policy']
     }
 
