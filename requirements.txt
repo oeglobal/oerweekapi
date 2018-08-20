@@ -42,6 +42,7 @@ Pygments==2.2.0
 PyJWT==1.6.4
 pytest==3.7.2
 pytest-django==3.4.1
+pytest-flake8==1.0.2
 python-dateutil==2.7.3
 python-oembed==0.2.4
 python-twitter==3.4.2
