@@ -69,3 +69,5 @@ localsettings.py
 /media/
 .DS_Store
 .idea/
+.pytest_cache/
+
