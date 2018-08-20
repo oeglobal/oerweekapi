@@ -4,7 +4,7 @@ from django.contrib import admin
 from rest_framework import routers
 import rest_framework_jwt.views
 
-from web.views import (PageViewSet, ResourceViewSet,EventViewSet,
+from web.views import (PageViewSet, ResourceViewSet, EventViewSet,
                        EventSummaryView, ExportResources,
                        SubmissionViewSet, TwitterSearchResults, EmailTemplateView)
 

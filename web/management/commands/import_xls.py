@@ -3,6 +3,7 @@ import xlrd
 
 from web.importer import import_submission
 
+
 class Command(BaseCommand):
     help = "Imports resources"
 

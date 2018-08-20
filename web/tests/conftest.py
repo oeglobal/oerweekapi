@@ -1,6 +1,5 @@
 import pytest
 
-from django.contrib.auth.models import User
 
 @pytest.fixture()
 def normal_user(db, django_user_model, django_username_field):

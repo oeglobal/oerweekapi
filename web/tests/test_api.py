@@ -95,7 +95,7 @@ def test_submission_event_local(rf, client, db, normal_user):
     assert resource.title == data.get('title')
     assert resource.event_type == 'local'
     assert resource.event_time == arrow.get(data.get('event_time')).datetime
-    assert  resource.event_facilitator == data.get('event_facilitator')
+    assert resource.event_facilitator == data.get('event_facilitator')
 
 
 @pytest.mark.client

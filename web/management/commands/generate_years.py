@@ -15,4 +15,3 @@ class Command(BaseCommand):
                 resource.year = 2017
 
             resource.save()
-

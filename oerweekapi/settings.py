@@ -141,6 +141,6 @@ OEW_YEAR = 2018
 
 CI = os.environ.get('CI')
 if CI:
-    from .testsettings import *
+    from .testsettings import *  # noqa: F401, F403
 else:
-    from .localsettings import *
+    from .localsettings import *  # noqa: F401, F403

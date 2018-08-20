@@ -1,7 +1,6 @@
 import arrow
 import xlwt
 import urllib.parse
-import json
 import twitter
 
 from itertools import groupby
@@ -15,7 +14,7 @@ from django.core.cache import cache
 
 from braces.views import LoginRequiredMixin
 
-from rest_framework import status, permissions, viewsets, generics
+from rest_framework import permissions, viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination

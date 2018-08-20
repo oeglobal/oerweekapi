@@ -1,5 +1,4 @@
-from pprint import pprint
-import arrow
+from pprint import pprint  # noqa: F401
 
 from django.template.defaultfilters import truncatewords_html
 from rest_framework import serializers
