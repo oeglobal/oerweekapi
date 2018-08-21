@@ -41,6 +41,7 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     directions = serializers.CharField(source='event_directions', allow_blank=True, allow_null=True)
     image_url = serializers.CharField(source='get_image_url', read_only=True)
     post_status = serializers.CharField(read_only=True, required=False)
+    post_status_friendly = serializers.SerializerMethodField(read_only=True, required=False)
 
     license = serializers.CharField(allow_blank=True, allow_null=True, required=False)
     slug = serializers.CharField(allow_null=True, required=False)
@@ -52,8 +53,19 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
                   'country', 'city', 'language',
                   'event_type', 'event_time', 'event_facilitator',
                   'title', 'description', 'event_time', 'directions', 'link', 'linkwebroom',
-                  'opentags', 'license', 'post_status', 'image_url', 'slug', 'post_type'
+                  'opentags', 'license', 'image_url', 'slug', 'post_type',
+                  'post_status', 'post_status_friendly'
                   )
+
+    def get_post_status_friendly(self, obj):
+        if obj.post_status == 'draft':
+            return 'Waiting for review'
+        elif obj.post_status == 'publish':
+            return 'Published'
+        elif obj.post_status == 'trash':
+            return 'Rejected'
+
+        return obj.post_status
 
     def validate_institutionurl(self, value):
         if value and not value.startswith('http'):
@@ -91,6 +103,7 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
 
         resource = Resource.objects.create(**data)
         resource.send_new_submission_email()
+        resource.send_new_account_email()
 
         return resource
 

@@ -114,7 +114,7 @@ def test_submission_oer_resource(rf, client, db, normal_user):
         'archive': False,
         'institution': 'OEC',
         'link': 'http://www.oeconsortium.org/web/resource/',
-        'email': 'mike2@example.com',
+        'email': 'mike3@example.com',
         'is_higher': True,
         'institutionurl': 'http://www.oeconsortium.org',
         'language': 'English',
@@ -207,5 +207,8 @@ def test_submission_email(rf, client, db, normal_user):
     response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
-    assert len(mail.outbox) == 1
+    assert len(mail.outbox) == 2
     assert mail.outbox[0].subject == 'OEW: We have received your submission'
+    assert mail.outbox[1].subject == 'OEW: Your account to edit submission(s)'
+
+    print(mail.outbox[1].body)

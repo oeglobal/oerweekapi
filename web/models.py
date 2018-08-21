@@ -1,5 +1,6 @@
 import hashlib
 import requests
+import uuid
 from urllib.parse import urlencode
 from base64 import urlsafe_b64encode
 
@@ -8,6 +9,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.utils.text import slugify
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.auth import get_user_model
 
 from taggit.managers import TaggableManager
 
@@ -15,6 +17,8 @@ from model_utils import Choices
 from model_utils.models import TimeStampedModel
 
 from mail_templated import send_mail
+
+User = get_user_model()
 
 
 class ReviewModel(models.Model):
@@ -119,7 +123,7 @@ class Resource(TimeStampedModel, ReviewModel):
 
     categories = models.ManyToManyField(Category, blank=True)
     tags = TaggableManager(blank=True)
-    opentags = ArrayField(models.CharField(max_length=255, blank=True,), blank=True)
+    opentags = ArrayField(models.CharField(max_length=255, blank=True, ), blank=True)
 
     notified = models.BooleanField(default=False)
     raw_post = models.TextField(blank=True)
@@ -193,6 +197,24 @@ class Resource(TimeStampedModel, ReviewModel):
         send_mail('emails/submission_received.tpl', {},
                   'info@openeducationweek.org', [self.email]
                   )
+
+    def send_new_account_email(self):
+        email = self.email.lower()
+        if not User.objects.filter(email=email).exists():
+            user = User.objects.create(
+                username=email,
+                email=email,
+                first_name=self.firstname,
+                last_name=self.lastname,
+                is_active=True
+            )
+            key = uuid.uuid4().hex
+            user.set_password(key)
+            user.save()
+
+            send_mail('emails/account_created.tpl', {'user': user, 'key': key},
+                      'info@openeducationweek.org', [self.email]
+                      )
 
 
 class EmailTemplate(models.Model):

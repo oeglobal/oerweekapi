@@ -98,7 +98,8 @@ class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
         queryset = Resource.objects.filter(
             post_status='publish',
             post_type__in=['resource', 'project']
-        )
+        ).order_by('-id')
+
         return super().get_queryset(queryset)
 
 

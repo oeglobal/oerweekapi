@@ -132,6 +132,7 @@ JWT_AUTH = {
     'JWT_LEEWAY': 60 * 5 * 60,
     'JWT_VERIFY_EXPIRATION': False,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_PAYLOAD_HANDLER': 'web.utils.custom_jwt_payload_handler'
 }
 
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
