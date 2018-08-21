@@ -76,7 +76,11 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         return SubmissionResourceSerializer
 
     def get_queryset(self):
-        return Resource.objects.filter(created__gte=arrow.get('2017-06-01').datetime).order_by('-created')
+        queryset = Resource.objects.filter(created__gte=arrow.get('2017-06-01').datetime).order_by('-created')
+        if self.request.user.is_staff:
+            return queryset
+
+        return queryset.filter(email__iexact=self.request.user.email)
 
 
 class ResourceEventMixin(generics.GenericAPIView):
