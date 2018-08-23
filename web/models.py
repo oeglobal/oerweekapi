@@ -225,3 +225,10 @@ class EmailTemplate(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ResourceImage(models.Model):
+    image = models.ImageField(upload_to='images/', blank=True)
+
+    def __str__(self):
+        return repr(self.image)

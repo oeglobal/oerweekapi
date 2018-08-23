@@ -1,9 +1,10 @@
 from pprint import pprint  # noqa: F401
 
 from django.template.defaultfilters import truncatewords_html
+from django.core.files.images import get_image_dimensions
 from rest_framework import serializers
 
-from .models import Page, Resource, EmailTemplate
+from .models import Page, Resource, ResourceImage, EmailTemplate
 
 
 class PageSerializer(serializers.HyperlinkedModelSerializer):
@@ -116,3 +117,20 @@ class EmailTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmailTemplate
         fields = ('id', 'name', 'subject', 'body')
+
+
+class ResourceImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResourceImage
+        fields = ('id', 'image')
+
+    def validate_image(self, value):
+        if value.content_type not in ['image/png', 'image/jpeg', 'image/gif']:
+            raise serializers.ValidationError('Image has to be in JPG or PNG format')
+
+        width, height = get_image_dimensions(value)
+
+        if width < 800 or height < 600:
+            raise serializers.ValidationError('Image is too small. It has to be at least 800x600px')
+
+        return value

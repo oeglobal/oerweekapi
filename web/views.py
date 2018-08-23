@@ -14,15 +14,15 @@ from django.core.cache import cache
 
 from braces.views import LoginRequiredMixin
 
-from rest_framework import permissions, viewsets, generics
+from rest_framework import permissions, viewsets, generics, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
-from .models import Page, Resource, EmailTemplate
+from .models import Page, Resource, ResourceImage, EmailTemplate
 from .serializers import (PageSerializer, ResourceSerializer,
                           SubmissionResourceSerializer, AdminSubmissionResourceSerializer,
-                          EmailTemplateSerializer)
+                          EmailTemplateSerializer, ResourceImageSerializer)
 
 
 class LargeResultsSetPagination(PageNumberPagination):
@@ -277,3 +277,13 @@ class EmailTemplateView(viewsets.ReadOnlyModelViewSet):
     model = EmailTemplate
     serializer_class = EmailTemplateSerializer
     queryset = EmailTemplate.objects.all().order_by('id')
+
+
+class ResourceImageViewSet(mixins.CreateModelMixin,
+                           mixins.RetrieveModelMixin,
+                           mixins.ListModelMixin,
+                           viewsets.GenericViewSet):
+    permission_classes = (SubmissionPermission,)
+    model = ResourceImage
+    serializer_class = ResourceImageSerializer
+    queryset = ResourceImage.objects.all().order_by('-id')
