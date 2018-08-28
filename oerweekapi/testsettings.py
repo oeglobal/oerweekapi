@@ -9,3 +9,4 @@ DATABASES = {
 }
 
 SECRET_KEY = '123'
+MEDIA_URL = '/media/'
