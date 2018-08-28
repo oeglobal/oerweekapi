@@ -2,16 +2,25 @@
 import pytest
 import json
 import arrow
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files import File
+
 from pprint import pprint
 
 from django.core import mail
 
-from web.models import Resource
+from web.models import Resource, ResourceImage
 
 
 @pytest.mark.client
 @pytest.mark.django_db
 def test_submission_event_online(rf, client, db, normal_user):
+    with open('web/tests/assets/sample-large.jpg', 'rb') as fp:
+        response = client.post('/api/resource-image', {'image': fp})
+        image_data = response.json()['data']
+        assert image_data['type'] == 'ResourceImage'
+        assert image_data['attributes']['image'].startswith('http://testserver/media/images/sample-large')
+
     data = {
         'data': {
             'attributes': {'email': 'mike.jones@example.com',
@@ -34,7 +43,8 @@ def test_submission_event_online(rf, client, db, normal_user):
                            'title': 'Webinar about OER',
                            'city': 'New York',
                            'image_url': '',
-                           'opentags': ['Open Research', 'Open Policy']
+                           'opentags': ['Open Research', 'Open Policy'],
+                           'image': image_data['id']
                            },
             'type': 'submission'
         }
@@ -52,6 +62,9 @@ def test_submission_event_online(rf, client, db, normal_user):
     assert resource.event_type == 'online'
     assert resource.event_online is True
     assert resource.post_status == 'draft'
+
+    assert resource.image == ResourceImage.objects.latest('id')
+    assert response.json()['data']['attributes']['image_url'] == image_data['attributes']['image']
 
     # check that validator adds http:// on www only submissions
     assert resource.link == 'http://www.oeconsortium.org/events/online/20'
@@ -89,7 +102,7 @@ def test_submission_event_local(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    client.post('/api/submission', content_type='application/json', data=json.dumps(data))
+    response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')

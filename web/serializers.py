@@ -40,13 +40,14 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
     description = serializers.CharField(source='content')
 
     directions = serializers.CharField(source='event_directions', allow_blank=True, allow_null=True)
-    image_url = serializers.CharField(source='get_image_url', read_only=True)
+    image_url = serializers.SerializerMethodField(read_only=True)
     post_status = serializers.CharField(read_only=True, required=False)
     post_status_friendly = serializers.SerializerMethodField(read_only=True, required=False)
 
     license = serializers.CharField(allow_blank=True, allow_null=True, required=False)
     slug = serializers.CharField(allow_null=True, required=False)
     linkwebroom = serializers.CharField(allow_blank=True)
+    image = serializers.CharField(allow_blank=True, required=False, source='image_id')
 
     class Meta:
         model = Resource
@@ -55,7 +56,7 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
                   'event_type', 'event_time', 'event_facilitator',
                   'title', 'description', 'event_time', 'directions', 'link', 'linkwebroom',
                   'opentags', 'license', 'image_url', 'slug', 'post_type',
-                  'post_status', 'post_status_friendly'
+                  'post_status', 'post_status_friendly', 'image'
                   )
 
     def get_post_status_friendly(self, obj):
@@ -67,6 +68,9 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
             return 'Rejected'
 
         return obj.post_status
+
+    def get_image_url(self, obj):
+        return obj.get_image_url(self.context['request'])
 
     def validate_institutionurl(self, value):
         if value and not value.startswith('http'):
@@ -101,6 +105,9 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
 
         if not data.get('license'):
             data['license'] = ''
+
+        if data.get('image_id'):
+            data['image'] = ResourceImage.objects.get(pk=data.get('image_id'))
 
         resource = Resource.objects.create(**data)
         resource.send_new_submission_email()

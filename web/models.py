@@ -129,10 +129,11 @@ class Resource(TimeStampedModel, ReviewModel):
     raw_post = models.TextField(blank=True)
 
     screenshot_status = models.CharField(blank=True, default='', max_length=64)
-    image = models.ImageField(upload_to='images/', blank=True)
 
     year = models.IntegerField(blank=True, null=True, default=settings.OEW_YEAR)
     oeaward = models.BooleanField(default=False)
+
+    image = models.ForeignKey('ResourceImage', null=True, default=None)
 
     def get_full_url(self):
         if self.post_type == 'event':
@@ -140,11 +141,15 @@ class Resource(TimeStampedModel, ReviewModel):
 
         return "http://www.openeducationweek.org/resources/{}".format(self.slug)
 
-    def get_image_url(self):
+    def get_image_url(self, request=None):
         if self.image_url:
             return self.image_url
+
         if self.image:
-            return self.image.url
+            if request:
+                return request.build_absolute_uri(self.image.image.url)
+            else:
+                return self.image.image.url
 
     def save(self, *args, **kwargs):
         if not self.slug:
