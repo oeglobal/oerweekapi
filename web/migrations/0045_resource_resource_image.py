@@ -7,7 +7,8 @@ import django.db.models.deletion
 
 
 def forwards(apps, schema_editor):
-    from web.models import Resource, ResourceImage
+    Resource = apps.get_model("web", "Resource")
+    ResourceImage = apps.get_model("web", "ResourceImage")
 
     for resource in Resource.objects.all():
         if resource.image:
