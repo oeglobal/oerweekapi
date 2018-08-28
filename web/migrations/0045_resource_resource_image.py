@@ -23,10 +23,15 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE',
+                          reverse_sql=migrations.RunSQL.noop),
         migrations.AddField(
             model_name='resource',
             name='resource_image',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='web.ResourceImage'),
         ),
         migrations.RunPython(forwards, hints={'target_db': 'default'}),
+        migrations.RunSQL(migrations.RunSQL.noop,
+                          reverse_sql='SET CONSTRAINTS ALL IMMEDIATE'),
+
     ]
