@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import pytest
 import json
 import arrow
@@ -6,6 +7,7 @@ import arrow
 from pprint import pprint  # noqa: F401
 
 from django.core import mail
+from django.conf import settings
 
 from web.models import Resource, ResourceImage
 
@@ -13,7 +15,7 @@ from web.models import Resource, ResourceImage
 @pytest.mark.client
 @pytest.mark.django_db
 def test_submission_event_online(rf, client, db, normal_user):
-    with open('web/tests/assets/sample-large.jpg', 'rb') as fp:
+    with open(os.path.join(settings.BASE_DIR, 'web/tests/assets/sample-large.jpg'), 'rb') as fp:
         response = client.post('/api/resource-image', {'image': fp})
         image_data = response.json()['data']
         assert image_data['type'] == 'ResourceImage'
