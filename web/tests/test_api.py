@@ -2,10 +2,8 @@
 import pytest
 import json
 import arrow
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.files import File
 
-from pprint import pprint
+from pprint import pprint  # noqa: F401
 
 from django.core import mail
 
@@ -52,7 +50,6 @@ def test_submission_event_online(rf, client, db, normal_user):
 
     # client.login(username='user', password='password')
     response = client.post('/api/submission', content_type='application/vnd.api+json', data=json.dumps(data))
-    pprint(response.json())
     assert data.get('data').get('attributes').get('title') in str(response.content), 'Submission failed'
 
     resource = Resource.objects.latest('id')
@@ -102,7 +99,7 @@ def test_submission_event_local(rf, client, db, normal_user):
     }
 
     client.login(username='user', password='password')
-    response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
+    client.post('/api/submission', content_type='application/json', data=json.dumps(data))
 
     resource = Resource.objects.latest('id')
     assert resource.title == data.get('title')
