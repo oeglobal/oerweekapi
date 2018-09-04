@@ -4,6 +4,7 @@ from raven.contrib.django.raven_compat.models import client
 
 from web.serializers import SubmissionResourceSerializer
 
+
 def custom_jwt_payload_handler(user):
     payload = jwt_payload_handler(user)
 
