@@ -223,4 +223,17 @@ def test_submission_email(rf, client, db, normal_user):
     assert mail.outbox[0].subject == 'OEW: We have received your submission'
     assert mail.outbox[1].subject == 'OEW: Your account to edit submission(s)'
 
-    print(mail.outbox[1].body)
+
+@pytest.mark.client
+@pytest.mark.django_db
+def test_exception_reporting(rf, client, db, normal_user):
+    data = {
+        'license': 'other',
+        'institution': '',
+        'archive': True,
+        'post_type': 'event',
+        'event_type': 'local',
+    }
+
+    response = client.post('/api/submission', content_type='application/json', data=json.dumps(data))
+    assert response.status_code == 400
