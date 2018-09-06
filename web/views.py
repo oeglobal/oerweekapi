@@ -84,13 +84,16 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
 
 class ResourceEventMixin(generics.GenericAPIView):
-    def get_queryset(self, queryset):
-        if self.request.GET.get('slug'):
-            queryset = queryset.filter(slug=self.request.GET.get('slug'))
+    filterset_fields = ('slug',)
 
+    def get_queryset(self, queryset):
         if self.request.GET.get('year'):
             year = self.request.GET.get('year', '2018')
             queryset = queryset.filter(year=year)
+
+        if self.request.GET.get('opentags'):
+            opentags = self.request.GET.get('opentags', '').split(',')
+            queryset = queryset.filter(opentags__contains=opentags)
 
         return queryset
 
