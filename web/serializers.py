@@ -15,7 +15,7 @@ class PageSerializer(serializers.HyperlinkedModelSerializer):
 
 class ResourceSerializer(serializers.HyperlinkedModelSerializer):
     content_excerpt = serializers.SerializerMethodField()
-    image_url = serializers.CharField(source='get_image_url')
+    image_url = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Resource
@@ -31,6 +31,9 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_content_excerpt(self, obj):
         return truncatewords_html(obj.content, 30)
+
+    def get_image_url(self, obj):
+        return obj.get_image_url(self.context['request'])
 
 
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
