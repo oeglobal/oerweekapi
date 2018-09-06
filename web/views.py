@@ -84,7 +84,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
 
 class ResourceEventMixin(generics.GenericAPIView):
-    filterset_fields = ('slug',)
+    filterset_fields = ('slug', 'form_language')
 
     def get_queryset(self, queryset):
         if self.request.GET.get('year'):
