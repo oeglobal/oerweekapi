@@ -134,6 +134,7 @@ class Resource(TimeStampedModel, ReviewModel):
     oeaward = models.BooleanField(default=False)
 
     image = models.ForeignKey('ResourceImage', null=True, default=None)
+    twitter = models.CharField(blank=True, null=True, max_length=255)
 
     def get_full_url(self):
         if self.post_type == 'event':

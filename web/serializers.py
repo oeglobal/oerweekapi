@@ -25,7 +25,7 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
                   'content_excerpt', 'image_url', 'country', 'city',
                   'event_time', 'event_type', 'opentags',
                   'event_source_datetime', 'event_source_timezone',
-                  'event_facilitator', 'linkwebroom'
+                  'event_facilitator', 'linkwebroom', 'twitter'
                   )
         read_only_fields = ('content_excerpt',)
 
@@ -59,7 +59,7 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
                   'event_type', 'event_time', 'event_facilitator',
                   'title', 'description', 'event_time', 'directions', 'link', 'linkwebroom',
                   'opentags', 'license', 'image_url', 'slug', 'post_type',
-                  'post_status', 'post_status_friendly', 'image'
+                  'post_status', 'post_status_friendly', 'image', 'twitter'
                   )
 
     def get_post_status_friendly(self, obj):
