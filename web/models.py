@@ -204,16 +204,17 @@ class Resource(TimeStampedModel, ReviewModel):
                   'info@openeducationweek.org', [self.email]
                   )
 
-    def send_new_account_email(self):
+    def send_new_account_email(self, force=False):
         email = self.email.lower()
-        if not User.objects.filter(email=email).exists():
-            user = User.objects.create(
+        if force or not User.objects.filter(email=email).exists():
+            user, is_created = User.objects.get_or_create(
                 username=email,
                 email=email,
-                first_name=self.firstname,
-                last_name=self.lastname,
-                is_active=True
-            )
+                defaults={
+                    'first_name': self.firstname,
+                    'last_name': self.lastname,
+                    'is_active': True
+                })
             key = uuid.uuid4().hex
             user.set_password(key)
             user.save()

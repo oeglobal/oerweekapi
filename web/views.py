@@ -290,3 +290,20 @@ class ResourceImageViewSet(mixins.CreateModelMixin,
     model = ResourceImage
     serializer_class = ResourceImageSerializer
     queryset = ResourceImage.objects.all().order_by('-id')
+
+
+class RequestAccessView(APIView):
+    permission_classes = (SubmissionPermission,)
+
+    def post(self, request, format=None):
+        email = request.data.get('email')
+
+        try:
+            print(email)
+            resource = Resource.objects.filter(email=email)[0]
+            resource.send_new_account_email(force=True)
+
+        except IndexError:
+            return Response({'status': 'invalid_email'})
+
+        return Response({'status': 'ok'})
