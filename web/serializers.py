@@ -37,7 +37,7 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
-    institutionurl = serializers.CharField(source='institution_url', allow_blank=True)
+    institutionurl = serializers.CharField(source='institution_url', allow_blank=True, allow_null=True)
     language = serializers.CharField(source='form_language')
     event_type = serializers.CharField(allow_null=True, required=False)
     description = serializers.CharField(source='content')

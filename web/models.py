@@ -89,16 +89,16 @@ class Resource(TimeStampedModel, ReviewModel):
     form_id = models.IntegerField(blank=True, null=True)
     contact = models.CharField(max_length=255, blank=True)
 
-    firstname = models.CharField(max_length=255, blank=True)
-    lastname = models.CharField(max_length=255, blank=True)
+    firstname = models.CharField(max_length=255, blank=True, null=True)
+    lastname = models.CharField(max_length=255, blank=True, null=True)
 
-    email = models.CharField(max_length=255, blank=True)
-    institution = models.CharField(max_length=255, blank=True)
-    institution_url = models.CharField(max_length=255, blank=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    institution = models.CharField(max_length=255, blank=True, null=True)
+    institution_url = models.CharField(max_length=255, blank=True, null=True)
     form_language = models.CharField(max_length=255, blank=True)
     license = models.CharField(max_length=255, blank=True, null=True)
-    link = models.CharField(max_length=255, blank=True)
-    linkwebroom = models.CharField(max_length=255, blank=True)
+    link = models.CharField(max_length=255, blank=True, null=True)
+    linkwebroom = models.CharField(max_length=255, blank=True, null=True)
 
     image_url = models.URLField(blank=True, null=True, max_length=500)
 

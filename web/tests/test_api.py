@@ -128,7 +128,7 @@ def test_submission_oer_resource(rf, client, db, normal_user):
         'link': 'http://www.oeconsortium.org/web/resource/',
         'email': 'mike3@example.com',
         'is_higher': True,
-        'institutionurl': 'http://www.oeconsortium.org',
+        'institutionurl': None,
         'language': 'English',
         'datetime': '2018-03-27T00:00:00+02:00',
         'license': 'CC-BY-SA',
