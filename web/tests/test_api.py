@@ -134,7 +134,11 @@ def test_submission_oer_resource(rf, client, db, normal_user):
         'license': 'CC-BY-SA',
         'directions': None,
         'linkwebroom': None,
-        'opentags': ['Open Research', 'Open Policy']
+        'opentags': ['Open Research', 'Open Policy'],
+        'event_facilitator': None,
+        'event_type': None,
+        'image_url': None,
+        'twitter': None,
     }
 
     client.login(username='user', password='password')

@@ -106,13 +106,13 @@ class Resource(TimeStampedModel, ReviewModel):
     country = models.CharField(max_length=255, blank=True)
 
     event_time = models.DateTimeField(blank=True, null=True)
-    event_type = models.CharField(max_length=255, blank=True, choices=EVENT_TYPES)
+    event_type = models.CharField(max_length=255, blank=True, null=True, choices=EVENT_TYPES)
     event_online = models.BooleanField(default=False)
     event_source_datetime = models.CharField(max_length=255, blank=True)
     event_source_timezone = models.CharField(max_length=255, blank=True)
     event_directions = models.CharField(max_length=255, blank=True, null=True)
-    event_other_text = models.CharField(max_length=255, blank=True)
-    event_facilitator = models.CharField(max_length=255, blank=True)
+    event_other_text = models.CharField(max_length=255, blank=True, null=True)
+    event_facilitator = models.CharField(max_length=255, blank=True, null=True)
 
     archive_planned = models.BooleanField(default=False)
     archive_link = models.CharField(max_length=255, blank=True)
