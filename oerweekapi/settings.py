@@ -139,7 +139,7 @@ JWT_AUTH = {
 DJANGO_WYSIWYG_FLAVOR = "ckeditor"
 
 LOGIN_URL = '/api-auth/login/'
-OEW_YEAR = 2018
+OEW_YEAR = 2019
 
 CI = os.environ.get('CI')
 if CI:
