@@ -189,7 +189,11 @@ class Resource(TimeStampedModel, ReviewModel):
             status_code = response.status_code
 
             if status_code == 200:
-                self.image.save('screenshot_{}.png'.format(self.pk), ContentFile(response.content))
+                resource_image = ResourceImage()
+                resource_image.image.save('screenshot_{}.png'.format(self.pk), ContentFile(response.content))
+                resource_image.save()
+
+                self.image = resource_image
                 self.screenshot_status = 'DONE'
                 self.save()
             elif status_code == 202:
