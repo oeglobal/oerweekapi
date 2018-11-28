@@ -12,7 +12,7 @@ class Command(BaseCommand):
         plaintext = get_template('emails/accepted.txt')
 
         for resource in Resource.objects.filter(post_status='publish',
-                                                created__year=2016,
+                                                created__year=2009,
                                                 notified=False).exclude(email='')[:15]:
             if Resource.objects.filter(email=resource.email, notified=True).count():
                 print('Skipping {} about #{}'.format(resource.email, resource.id))
