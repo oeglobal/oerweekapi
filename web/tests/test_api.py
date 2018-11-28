@@ -224,7 +224,7 @@ def test_submission_email(rf, client, db, normal_user):
     assert data.get('title') in str(response.content), 'OER Resource Submission failed'
 
     assert len(mail.outbox) == 2
-    assert mail.outbox[0].subject == 'OEW: We have received your submission'
+    assert mail.outbox[0].subject == 'OEW submission was received'
     assert mail.outbox[1].subject == 'OEW: Your account to edit submission(s)'
 
 
