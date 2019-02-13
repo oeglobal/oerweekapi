@@ -215,8 +215,8 @@ class Resource(TimeStampedModel, ReviewModel):
                 username=email,
                 email=email,
                 defaults={
-                    'first_name': self.firstname,
-                    'last_name': self.lastname,
+                    'first_name': self.firstname[:30],
+                    'last_name': self.lastname[:30],
                     'is_active': True
                 })
             key = uuid.uuid4().hex

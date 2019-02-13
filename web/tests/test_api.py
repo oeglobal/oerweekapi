@@ -37,7 +37,7 @@ def test_submission_event_online(rf, client, db, normal_user):
                            'country': 'United States',
                            'lastname': 'Jones',
                            'is_primary': False,
-                           'firstname': 'Mike',
+                           'firstname': 'Mike With A Very Long Last Name',
                            'datetime': '2018-03-27T19:00:00+02:00',
                            'is_higher': True,
                            'title': 'Webinar about OER',
