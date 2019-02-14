@@ -148,7 +148,10 @@ class Resource(TimeStampedModel, ReviewModel):
 
         if self.image:
             if request:
-                return request.build_absolute_uri(self.image.image.url)
+                try:
+                    return request.build_absolute_uri(self.image.image.url)
+                except ValueError:
+                    return None
             else:
                 return self.image.image.url
 
