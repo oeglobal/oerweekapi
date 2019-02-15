@@ -136,6 +136,9 @@ class Resource(TimeStampedModel, ReviewModel):
     image = models.ForeignKey('ResourceImage', null=True, default=None)
     twitter = models.CharField(blank=True, null=True, max_length=255)
 
+    def __str__(self):
+        return 'Resource #{}'.format(self.id)
+
     def get_full_url(self):
         if self.post_type == 'event':
             return "http://www.openeducationweek.org/events/{}".format(self.slug)
