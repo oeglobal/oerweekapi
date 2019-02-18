@@ -9,6 +9,8 @@ class ResourceAdmin(admin.ModelAdmin):
     search_fields = ('post_id', 'title', 'country', 'contact', 'firstname', 'lastname', 'email', 'institution', 'link')
     list_filter = ('post_status', 'post_type', 'event_type', 'notified')
 
+    save_as = True
+
 
 class PageAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
