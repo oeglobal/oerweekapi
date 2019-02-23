@@ -216,7 +216,7 @@ class ExportResources(LoginRequiredMixin, View):
         font_style = xlwt.XFStyle()
         font_style.alignment.wrap = 1
 
-        for resource in Resource.objects.filter(post_status='publish', year=2018):
+        for resource in Resource.objects.filter(post_status='publish', year=2019):
             row_num += 1
 
             event_time = ''
