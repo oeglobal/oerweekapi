@@ -88,7 +88,7 @@ class ResourceEventMixin(generics.GenericAPIView):
 
     def get_queryset(self, queryset):
         if self.request.GET.get('year'):
-            year = self.request.GET.get('year', '2018')
+            year = self.request.GET.get('year', '2019')
             queryset = queryset.filter(year=year)
 
         if self.request.GET.get('opentags'):
@@ -128,21 +128,25 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
                                                post_status='publish').order_by('event_time')[:8]
             return queryset
 
-        if self.request.GET.get('event_type') == 'local':
+        event_type = self.request.GET.get('event_type')
+        if len(event_type) == 1:
+            event_type = event_type.pop()
+
+        if event_type == 'local':
             queryset = queryset \
-                .filter(year=2018) \
+                .filter(year=2019) \
                 .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
 
-        if self.request.GET.get('event_type') == 'online':
+        if event_type == 'online':
             queryset = queryset \
-                .filter(year=2018,
+                .filter(year=2019,
                         event_type__in=('webinar', 'online', 'other_online'))
 
         if self.request.GET.get('date'):
             if self.request.GET.get('date') == 'other':
                 queryset = queryset \
                     .filter(event_time__month=3) \
-                    .exclude(event_time__range=['2018-03-05 00:00:00', '2018-03-09 23:59:59'])
+                    .exclude(event_time__range=['2019-03-04 00:00:00', '2018-03-08 23:59:59'])
             else:
                 date = arrow.get(self.request.GET.get('date'))
                 queryset = queryset.filter(event_time__year=date.year,
@@ -158,7 +162,7 @@ class EventSummaryView(APIView):
 
         country_events = Resource.objects \
             .filter(post_type='event',
-                    modified__year=2017) \
+                    modified__year=2019) \
             .exclude(country='',
                      event_type__in=('webinar', '')) \
             .order_by('country')
