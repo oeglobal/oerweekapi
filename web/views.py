@@ -129,7 +129,7 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
             return queryset
 
         event_type = self.request.GET.get('event_type')
-        if len(event_type) == 1:
+        if event_type and len(event_type) == 1:
             event_type = event_type.pop()
 
         if event_type == 'local':
