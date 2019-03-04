@@ -146,7 +146,7 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
             if self.request.GET.get('date') == 'other':
                 queryset = queryset \
                     .filter(event_time__month=3) \
-                    .exclude(event_time__range=['2019-03-04 00:00:00', '2018-03-08 23:59:59'])
+                    .exclude(event_time__range=['2019-03-04 00:00:00', '2019-03-08 23:59:59'])
             else:
                 date = arrow.get(self.request.GET.get('date'))
                 queryset = queryset.filter(event_time__year=date.year,
