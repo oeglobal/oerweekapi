@@ -29,7 +29,7 @@ class ReviewModel(models.Model):
         ('rejected', 'Rejected')
     )
     status = models.CharField(choices=REVIEW_CHOICES, default='new', max_length=16)
-    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -133,7 +133,7 @@ class Resource(TimeStampedModel, ReviewModel):
     year = models.IntegerField(blank=True, null=True, default=settings.OEW_YEAR)
     oeaward = models.BooleanField(default=False)
 
-    image = models.ForeignKey('ResourceImage', null=True, default=None, blank=True)
+    image = models.ForeignKey('ResourceImage', null=True, default=None, blank=True, on_delete=models.CASCADE)
     twitter = models.CharField(blank=True, null=True, max_length=255)
 
     def __str__(self):
