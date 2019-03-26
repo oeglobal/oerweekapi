@@ -212,6 +212,7 @@ class ExportResources(LoginRequiredMixin, View):
             (u"City", 8000),
             (u"Language", 8000),
             (u"Twitter", 8000),
+            (u"Tags", 8000),
         ]
 
         for col_num in range(len(columns)):
@@ -244,6 +245,7 @@ class ExportResources(LoginRequiredMixin, View):
                 resource.city,
                 resource.form_language,
                 resource.twitter,
+                ', '.join(resource.opentags or []),
             ]
 
             for col_num in range(len(row)):
