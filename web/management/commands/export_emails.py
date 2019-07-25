@@ -7,8 +7,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         emails = []
-        for resource in Resource.objects.filter(post_status='publish', created__year=2016):
+        for resource in Resource.objects.filter(post_status='publish', year=2019):
             emails.append(resource.email)
 
         for email in set(emails):
-            print(email)
+            print("{},".format(email))
