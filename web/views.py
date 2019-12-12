@@ -88,7 +88,7 @@ class ResourceEventMixin(generics.GenericAPIView):
 
     def get_queryset(self, queryset):
         if self.request.GET.get('year'):
-            year = self.request.GET.get('year', '2019')
+            year = self.request.GET.get('year', settings.OEW_YEAR)
             queryset = queryset.filter(year=year)
 
         if self.request.GET.get('opentags'):
@@ -134,19 +134,19 @@ class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 
         if event_type == 'local':
             queryset = queryset \
-                .filter(year=2019) \
+                .filter(year=settings.OEW_YEAR) \
                 .exclude(Q(country='') | Q(event_type__in=('webinar', 'online')))
 
         if event_type == 'online':
             queryset = queryset \
-                .filter(year=2019,
+                .filter(year=settings.OEW_YEAR,
                         event_type__in=('webinar', 'online', 'other_online'))
 
         if self.request.GET.get('date'):
             if self.request.GET.get('date') == 'other':
                 queryset = queryset \
                     .filter(event_time__month=3) \
-                    .exclude(event_time__range=['2019-03-04 00:00:00', '2019-03-08 23:59:59'])
+                    .exclude(event_time__range=settings.OEW_RANGE)
             else:
                 date = arrow.get(self.request.GET.get('date'))
                 queryset = queryset.filter(event_time__year=date.year,
@@ -162,7 +162,7 @@ class EventSummaryView(APIView):
 
         country_events = Resource.objects \
             .filter(post_type='event',
-                    modified__year=2019) \
+                    modified__year=settings.OEW_YEAR) \
             .exclude(country='',
                      event_type__in=('webinar', '')) \
             .order_by('country')
@@ -222,7 +222,7 @@ class ExportResources(LoginRequiredMixin, View):
         font_style = xlwt.XFStyle()
         font_style.alignment.wrap = 1
 
-        for resource in Resource.objects.filter(post_status='publish', year=2019):
+        for resource in Resource.objects.filter(post_status='publish', year=settings.OEW_YEAR):
             row_num += 1
 
             event_time = ''
