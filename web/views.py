@@ -76,7 +76,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
         return SubmissionResourceSerializer
 
     def get_queryset(self):
-        queryset = Resource.objects.filter(created__gte=arrow.get('2018-06-01').datetime).order_by('-created')
+        queryset = Resource.objects.filter(created__gte=arrow.get('2019-06-01').datetime).order_by('-created')
         if self.request.user.is_staff:
             return queryset
 
