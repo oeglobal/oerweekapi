@@ -82,7 +82,7 @@ class SubmissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Resource.objects.filter(
-            created__gte=arrow.get("2019-06-01").datetime
+            created__gte=arrow.get(settings.OEW_CFP_OPEN).datetime
         ).order_by("-created")
         if self.request.user.is_staff:
             return queryset

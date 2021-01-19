@@ -142,6 +142,14 @@ class SubmissionResourceSerializer(serializers.HyperlinkedModelSerializer):
 
         return value
 
+    def validate_image(self, value):
+        try:
+            int(value)
+        except ValueError:
+            value = None
+
+        return value
+
     def to_internal_value(self, data):
         if data.get("linkwebroom") is None:
             data["linkwebroom"] = ""
