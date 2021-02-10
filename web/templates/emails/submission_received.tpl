@@ -1,20 +1,24 @@
 {% extends "mail_templated/base.tpl" %}
 
 {% block subject %}
-OEW submission was received
+OE Week submission received
 {% endblock %}
 
 {% block body %}
-Dear OEW Collaborator,
+Dear Open Education Week Collaborator,
 
-We appreciate your support and contribution to the Open Education Week.  Your submission has been received and will be reviewed shortly by the OEW Planning Committee.  We will notify you once your submission is approved and posted on the website. In the meantime please don't hesitate to contact us at info@openeducationweek.org if you have any questions.
+We appreciate your contribution to Open Education Week (OE Week).  Your entry has been received and will be reviewed shortly by the OE Week Planning Committee.  We will notify you when your submission is approved and posted to the website. If you have questions, please contact us at info@openeducationweek.org.
 
-The Open Education Week is a global effort built on everyone's contributions.  Please visit the website (www.openeducationweek.org) regularly to see the latest updates and additions to the event.  Don't forget to take advantage of the  promotional materials available for download, reuse, remix, and redistribution to promote your own events and to  promote Open Education Week.
+Open Education Week is a global effort built on everyone's contributions.  Please visit the website ( https://www.openeducationweek.org ) regularly for the latest updates and additions to the event.  Take advantage of the promotional materials available for you to download, reuse, remix, and redistributie to promote your own activities and events.
 
-Once again thank you for helping us make this event a global celebration of the Open Education Movement. We look forward to seeing you around throughout the week.
+This year we invite you to share your OE Week experiences, curate resources, and participate in discussions in our OEG Connect community space for the event at https://connect.oeglobal.org/c/oeweek/33
+If you have not created an account here we offer a unique invitation link so you can join https://connect.oeglobal.org/invites/5672641d95213429eed88734f499632b
+
+Once again thank you for helping us make this event a global celebration of the Open Education movement. We look forward to seeing your participation throughout the week.
 
 Many thanks,
-OEW Planning Committee
+
+Open Education Week Planning Committee
 #OEWeek
 
 {% endblock %}
