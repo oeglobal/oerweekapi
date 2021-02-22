@@ -19,11 +19,12 @@ def custom_drf_exception_handler(exc, context):
     if type(context.get("view").get_serializer_class()) == type(
         SubmissionResourceSerializer
     ):
-        set_context("submission", exc.get_full_details())
-        capture_message(
-            "Form Submission Validation Error",
-            level="debug",
-        )
+        if hasattr(exc, "status_code") and exc.status_code != 404:
+            set_context("submission", exc.get_full_details())
+            capture_message(
+                "Form Submission Validation Error",
+                level="debug",
+            )
     else:
         set_context("extra", exc.get_full_details())
 
