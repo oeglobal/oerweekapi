@@ -44,6 +44,11 @@ class CustomResultsSetPagination(PageNumberPagination):
     page_query_param = "page['number']"
 
 
+class LargeMaxPageSizePagination(PageNumberPagination):
+    max_page_size = 1000
+    page_size_query_param = "page[size]"
+
+
 class PageViewSet(viewsets.ModelViewSet):
     serializer_class = PageSerializer
 
@@ -118,6 +123,7 @@ class ResourceViewSet(ResourceEventMixin, viewsets.ModelViewSet):
 
 class EventViewSet(ResourceEventMixin, viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
+    pagination_class = LargeMaxPageSizePagination
     resource_name = "event"
 
     def get_queryset(self):
