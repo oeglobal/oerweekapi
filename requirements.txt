@@ -38,7 +38,7 @@ psycopg2_binary==2.7.5
 ptyprocess==0.5.2
 py==1.5.4
 Pygments==2.2.0
-PyJWT==1.6.4
+PyJWT==2.4.0
 pytest==3.7.2
 pytest-django==3.4.1
 pytest-flake8==1.0.2
